@@ -1,7 +1,9 @@
+import { Role } from './auth.model';
+
 export interface UserResponse {
   id: number;
   username: string;
   name: string;
-  role: 'USER' | 'ADMIN';
+  role: Role;
   createdAt: string;
 }

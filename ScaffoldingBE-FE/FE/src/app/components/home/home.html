@@ -1,0 +1,41 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Hola, {{ auth.username() }}</h1>
+    <p class="text-gray-600">Bienvenido al sistema de turnos de la peluquer&iacute;a.</p>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <a routerLink="/tratamientos"
+       class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
+      <h2 class="font-semibold text-gray-900">Tratamientos</h2>
+      <p class="text-sm text-gray-600">Ver los servicios disponibles.</p>
+    </a>
+
+    <a routerLink="/peluqueros"
+       class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
+      <h2 class="font-semibold text-gray-900">Peluqueros</h2>
+      <p class="text-sm text-gray-600">Conoc&eacute; al equipo.</p>
+    </a>
+
+    @if (auth.role() === 'CLIENTE') {
+      <a routerLink="/reservar"
+         class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
+        <h2 class="font-semibold text-gray-900">Reservar turno</h2>
+        <p class="text-sm text-gray-600">Eleg&iacute; d&iacute;a y horario.</p>
+      </a>
+      <a routerLink="/mis-turnos"
+         class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
+        <h2 class="font-semibold text-gray-900">Mis turnos</h2>
+        <p class="text-sm text-gray-600">Confirm&aacute; o cancel&aacute; tus turnos.</p>
+      </a>
+    }
+
+    @if (auth.role() === 'PELUQUERO') {
+      <a routerLink="/agenda"
+         class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
+        <h2 class="font-semibold text-gray-900">Mi agenda</h2>
+        <p class="text-sm text-gray-600">Ve&eacute; tus turnos asignados.</p>
+      </a>
+    }
+  </div>
+</div>

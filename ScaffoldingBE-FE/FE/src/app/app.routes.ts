@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './shared/guards/auth.guard';
+import { roleGuard } from './shared/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -14,7 +15,28 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./components/main-layout/main-layout').then(m => m.MainLayout),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    children: [
+      { path: '', loadComponent: () => import('./components/home/home').then(m => m.Home) },
+      {
+        path: 'tratamientos',
+        canActivate: [roleGuard(['CLIENTE', 'PELUQUERO', 'ADMIN'])],
+        loadComponent: () =>
+          import('./components/tratamiento-list/tratamiento-list').then(m => m.TratamientoList)
+      },
+      {
+        path: 'peluqueros',
+        canActivate: [roleGuard(['CLIENTE', 'PELUQUERO', 'ADMIN'])],
+        loadComponent: () =>
+          import('./components/peluquero-list/peluquero-list').then(m => m.PeluqueroList)
+      },
+      {
+        path: 'reservar',
+        canActivate: [roleGuard(['CLIENTE'])],
+        loadComponent: () =>
+          import('./components/reserva/reserva').then(m => m.Reserva)
+      }
+    ]
   },
   { path: '**', redirectTo: 'auth/login' }
 ];

@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.model';
+import { LoginRequest, RegisterRequest, AuthResponse, Role } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,7 +10,7 @@ export class AuthService {
   private router = inject(Router);
 
   username = signal<string | null>(null);
-  role = signal<'USER' | 'ADMIN' | null>(null);
+  role = signal<Role | null>(null);
 
   constructor() {
     this.loadState();
