@@ -31,8 +31,18 @@ export class Register {
     this.auth.register(this.form.getRawValue()).subscribe({
       next: () => this.router.navigate(['/']),
       error: (err) => {
-        this.error.set(err.error?.message || 'Error al registrarse');
+        this.error.set(this.extractError(err));
       }
     });
+  }
+
+  private extractError(err: any): string {
+    const body = err?.error;
+    // errores de validación por campo -> mostrarlos concatenados
+    if (body?.details && typeof body.details === 'object') {
+      const msgs = Object.values(body.details) as string[];
+      if (msgs.length) return msgs.join('. ');
+    }
+    return body?.message || 'Error al registrarse';
   }
 }

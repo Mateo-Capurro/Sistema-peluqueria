@@ -1,0 +1,46 @@
+<div class="space-y-4 max-w-3xl">
+  <h1 class="text-2xl font-bold text-gray-900">Mi agenda</h1>
+
+  @if (error()) {
+    <div class="p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="text-gray-500">Cargando...</p>
+  } @else if (turnos().length === 0) {
+    <p class="text-gray-500">No tenés turnos en tu agenda.</p>
+  } @else {
+    <div class="space-y-3">
+      @for (t of turnos(); track t.id) {
+        <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-wrap items-center gap-3">
+          <div class="flex-1 min-w-[200px]">
+            <p class="font-semibold text-gray-900">{{ t.tratamientoNombre }}</p>
+            <p class="text-sm text-gray-600">cliente: {{ t.clienteNombre }}</p>
+            <p class="text-sm text-gray-600">{{ fecha(t.inicio) }} · {{ hora(t.inicio) }}–{{ hora(t.fin) }}</p>
+          </div>
+
+          <span class="text-xs font-medium px-2 py-1 rounded-full" [class]="badge(t.estado)">{{ t.estado }}</span>
+
+          <div class="flex gap-2">
+            @if (t.estado === 'CONFIRMADO') {
+              <button
+                (click)="completar(t)"
+                [disabled]="accionando() !== null"
+                class="text-sm bg-green-600 text-white rounded px-3 py-1.5 font-medium hover:bg-green-700 disabled:opacity-50">
+                {{ accionando() === t.id ? '...' : 'Completar' }}
+              </button>
+            }
+            @if (t.estado === 'PENDIENTE' || t.estado === 'CONFIRMADO') {
+              <button
+                (click)="cancelar(t)"
+                [disabled]="accionando() !== null"
+                class="text-sm border border-red-300 text-red-700 rounded px-3 py-1.5 font-medium hover:bg-red-50 disabled:opacity-50">
+                {{ accionando() === t.id ? '...' : 'Cancelar' }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

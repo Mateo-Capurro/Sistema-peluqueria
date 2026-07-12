@@ -7,6 +7,8 @@ public final class Messages {
 
     public static final String USER_NOT_FOUND = "User not found with username: %s";
     public static final String USER_ALREADY_EXISTS = "User already exists with username: %s";
+    public static final String EMAIL_ALREADY_EXISTS = "Ya existe un usuario con el email: %s";
+    public static final String DNI_ALREADY_EXISTS = "Ya existe un usuario con el dni: %s";
     public static final String INVALID_CREDENTIALS = "Invalid username or password";
     public static final String REFRESH_TOKEN_NOT_FOUND = "Refresh token not found";
     public static final String REFRESH_TOKEN_EXPIRED = "Refresh token has expired";

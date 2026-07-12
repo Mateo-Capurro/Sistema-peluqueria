@@ -41,6 +41,24 @@ export const routes: Routes = [
         canActivate: [roleGuard(['CLIENTE'])],
         loadComponent: () =>
           import('./components/mis-turnos/mis-turnos').then(m => m.MisTurnos)
+      },
+      {
+        path: 'agenda',
+        canActivate: [roleGuard(['PELUQUERO'])],
+        loadComponent: () =>
+          import('./components/agenda/agenda').then(m => m.Agenda)
+      },
+      {
+        path: 'admin/tratamientos',
+        canActivate: [roleGuard(['ADMIN'])],
+        loadComponent: () =>
+          import('./components/admin-tratamientos/admin-tratamientos').then(m => m.AdminTratamientos)
+      },
+      {
+        path: 'admin/peluqueros',
+        canActivate: [roleGuard(['ADMIN'])],
+        loadComponent: () =>
+          import('./components/admin-peluqueros/admin-peluqueros').then(m => m.AdminPeluqueros)
       }
     ]
   },

@@ -84,12 +84,35 @@ class UserServiceImplementationTest {
 
         @Test
         @DisplayName("should throw when username already exists")
-        void registerUser_existingEmail_throwsException() {
+        void registerUser_existingUsername_throwsException() {
             when(userRepository.existsByUsername("testuser")).thenReturn(true);
 
             assertThatThrownBy(() -> userService.registerUser(registerRequest, UserEntity.Role.CLIENTE))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("User already exists with username:");
+        }
+
+        @Test
+        @DisplayName("should throw when email already exists")
+        void registerUser_existingEmail_throwsException() {
+            when(userRepository.existsByUsername("testuser")).thenReturn(false);
+            when(userRepository.existsByEmail("test@peluqueria.com")).thenReturn(true);
+
+            assertThatThrownBy(() -> userService.registerUser(registerRequest, UserEntity.Role.CLIENTE))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("email");
+        }
+
+        @Test
+        @DisplayName("should throw when dni already exists")
+        void registerUser_existingDni_throwsException() {
+            when(userRepository.existsByUsername("testuser")).thenReturn(false);
+            when(userRepository.existsByEmail("test@peluqueria.com")).thenReturn(false);
+            when(userRepository.existsByDni("40000000")).thenReturn(true);
+
+            assertThatThrownBy(() -> userService.registerUser(registerRequest, UserEntity.Role.CLIENTE))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("dni");
         }
     }
 

@@ -27,6 +27,14 @@ public class UserServiceImplementation implements UserService {
             throw new IllegalArgumentException(
                     String.format(Messages.USER_ALREADY_EXISTS, request.getUsername()));
         }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException(
+                    String.format(Messages.EMAIL_ALREADY_EXISTS, request.getEmail()));
+        }
+        if (userRepository.existsByDni(request.getDni())) {
+            throw new IllegalArgumentException(
+                    String.format(Messages.DNI_ALREADY_EXISTS, request.getDni()));
+        }
         User user = modelMapper.map(request, User.class);
         user.setRole(role);
         UserEntity entity = modelMapper.map(user, UserEntity.class);

@@ -59,6 +59,8 @@ export class AuthService {
   private setSession(res: AuthResponse): void {
     localStorage.setItem('access_token', res.accessToken);
     localStorage.setItem('refresh_token', res.refreshToken);
+    localStorage.setItem('username', res.username);
+    localStorage.setItem('role', res.role);
     this.username.set(res.username);
     this.role.set(res.role);
   }
@@ -66,6 +68,8 @@ export class AuthService {
   private clearSession(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
     this.username.set(null);
     this.role.set(null);
   }
@@ -73,12 +77,8 @@ export class AuthService {
   private loadState(): void {
     const token = this.getToken();
     if (!token) return;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      this.username.set(payload.sub);
-      this.role.set(payload.role || null);
-    } catch {
-      this.clearSession();
-    }
+    // El JWT del BE no incluye claim de rol: se persiste aparte en setSession.
+    this.username.set(localStorage.getItem('username'));
+    this.role.set(localStorage.getItem('role') as Role | null);
   }
 }
