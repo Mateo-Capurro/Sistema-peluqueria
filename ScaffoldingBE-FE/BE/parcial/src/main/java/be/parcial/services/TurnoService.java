@@ -10,6 +10,7 @@ public interface TurnoService {
     List<TurnoResponseDTO> misTurnos(String clienteUsername);
     List<TurnoResponseDTO> agenda(String peluqueroUsername);
     TurnoResponseDTO confirmar(String username, Long turnoId);
+    TurnoResponseDTO confirmarPorToken(String token);
     TurnoResponseDTO cancelar(String username, Long turnoId);
     TurnoResponseDTO completar(String username, Long turnoId);
 }

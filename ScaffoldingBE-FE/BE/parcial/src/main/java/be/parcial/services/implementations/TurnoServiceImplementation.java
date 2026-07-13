@@ -22,6 +22,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +66,7 @@ public class TurnoServiceImplementation implements TurnoService {
         turno.setInicio(inicio);
         turno.setFin(fin);
         turno.setEstado(EstadoTurno.PENDIENTE);
+        turno.setConfirmToken(UUID.randomUUID().toString());
 
         TurnoEntity saved = turnoRepository.save(turno);
         notificationService.notifyReserva(saved);
@@ -97,6 +99,14 @@ public class TurnoServiceImplementation implements TurnoService {
         if (!esCliente(turno, username)) {
             throw new AccessDeniedException(Messages.ACCESS_DENIED);
         }
+        turno.setEstado(turno.getEstado().confirmar());
+        return toDto(turnoRepository.save(turno));
+    }
+
+    @Override
+    public TurnoResponseDTO confirmarPorToken(String token) {
+        TurnoEntity turno = turnoRepository.findByConfirmToken(token)
+                .orElseThrow(() -> new ResourceNotFoundException(Messages.TOKEN_CONFIRMACION_INVALIDO));
         turno.setEstado(turno.getEstado().confirmar());
         return toDto(turnoRepository.save(turno));
     }

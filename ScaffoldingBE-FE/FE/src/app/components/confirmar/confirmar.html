@@ -1,0 +1,34 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+  <div class="w-full max-w-md bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+
+    @if (estado() === 'cargando') {
+      <p class="text-gray-500">Confirmando tu turno...</p>
+    }
+
+    @if (estado() === 'ok') {
+      <div class="text-4xl mb-2">✅</div>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">¡Turno confirmado!</h1>
+      @if (turno(); as t) {
+        <p class="text-gray-600 text-sm">
+          {{ t.tratamientoNombre }} con {{ t.peluqueroNombre }}<br>
+          {{ fechaHora(t.inicio) }} hs
+        </p>
+      }
+      <a routerLink="/mis-turnos"
+         class="inline-block mt-5 bg-blue-600 text-white rounded px-4 py-2 text-sm font-medium hover:bg-blue-700">
+        Ver mis turnos
+      </a>
+    }
+
+    @if (estado() === 'error') {
+      <div class="text-4xl mb-2">⚠️</div>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">No se pudo confirmar</h1>
+      <p class="text-gray-600 text-sm">{{ mensaje() }}</p>
+      <a routerLink="/"
+         class="inline-block mt-5 bg-gray-600 text-white rounded px-4 py-2 text-sm font-medium hover:bg-gray-700">
+        Ir al inicio
+      </a>
+    }
+
+  </div>
+</div>

@@ -291,6 +291,24 @@ class TurnoServiceImplementationTest {
         }
 
         @Test
+        void confirmarPorToken_valido_movesToConfirmado() {
+            when(turnoRepository.findByConfirmToken("tok-1"))
+                    .thenReturn(Optional.of(turnoEnEstado(EstadoTurno.PENDIENTE)));
+            when(turnoRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(turnoService.confirmarPorToken("tok-1").getEstado())
+                    .isEqualTo(EstadoTurno.CONFIRMADO);
+        }
+
+        @Test
+        void confirmarPorToken_invalido_throwsNotFound() {
+            when(turnoRepository.findByConfirmToken("bad")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> turnoService.confirmarPorToken("bad"))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
         void cancelar_owner_movesToCancelado() {
             when(turnoRepository.findById(100L)).thenReturn(Optional.of(turnoEnEstado(EstadoTurno.PENDIENTE)));
             when(turnoRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));

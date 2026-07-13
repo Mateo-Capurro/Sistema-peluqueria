@@ -70,6 +70,12 @@ public class TurnoController {
         return ResponseEntity.ok(turnoService.confirmar(authentication.getName(), id));
     }
 
+    @PostMapping("/confirmar/token/{token}")
+    @Operation(summary = "Confirma un turno vía token del email (público, sin login)")
+    public ResponseEntity<TurnoResponseDTO> confirmarPorToken(@PathVariable String token) {
+        return ResponseEntity.ok(turnoService.confirmarPorToken(token));
+    }
+
     @PatchMapping("/{id}/cancelar")
     @PreAuthorize("hasAnyRole('CLIENTE','PELUQUERO')")
     @Operation(summary = "Cancela el turno (cliente dueño o peluquero asignado)")

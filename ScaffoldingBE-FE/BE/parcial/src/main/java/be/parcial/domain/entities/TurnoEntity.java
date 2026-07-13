@@ -40,6 +40,10 @@ public class TurnoEntity {
     @Column(nullable = false)
     private EstadoTurno estado;
 
+    // Token opaco para confirmar el turno desde el link del email (sin login).
+    @Column(unique = true)
+    private String confirmToken;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

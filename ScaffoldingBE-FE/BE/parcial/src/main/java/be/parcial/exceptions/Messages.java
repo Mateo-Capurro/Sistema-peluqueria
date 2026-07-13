@@ -21,6 +21,7 @@ public final class Messages {
     public static final String INVALID_JORNADA = "HoraInicio must be before HoraFin";
     public static final String TRANSICION_INVALIDA = "Cannot apply action '%s' on turno in estado %s";
     public static final String TURNO_NOT_FOUND = "Turno not found with id: %s";
+    public static final String TOKEN_CONFIRMACION_INVALIDO = "El link de confirmacion no es valido o ya fue usado";
     public static final String SLOT_FECHA_PASADA = "No se puede reservar un turno en el pasado";
     public static final String SLOT_DIA_NO_LABORABLE = "La peluqueria no atiende los lunes";
     public static final String SLOT_FUERA_JORNADA = "El horario esta fuera de la jornada del peluquero";

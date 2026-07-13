@@ -4,6 +4,10 @@ import { roleGuard } from './shared/guards/role.guard';
 
 export const routes: Routes = [
   {
+    path: 'confirmar/:token',
+    loadComponent: () => import('./components/confirmar/confirmar').then(m => m.Confirmar)
+  },
+  {
     path: 'auth',
     loadComponent: () => import('./components/auth-layout/auth-layout').then(m => m.AuthLayout),
     children: [

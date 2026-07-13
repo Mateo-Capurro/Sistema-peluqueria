@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TurnoRepository extends JpaRepository<TurnoEntity, Long> {
@@ -25,4 +26,6 @@ public interface TurnoRepository extends JpaRepository<TurnoEntity, Long> {
     List<TurnoEntity> findByClienteIdOrderByInicioDesc(Long clienteId);
 
     List<TurnoEntity> findByPeluqueroIdOrderByInicioAsc(Long peluqueroId);
+
+    Optional<TurnoEntity> findByConfirmToken(String confirmToken);
 }

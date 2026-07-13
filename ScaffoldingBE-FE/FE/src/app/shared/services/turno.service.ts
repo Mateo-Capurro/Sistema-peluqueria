@@ -32,6 +32,10 @@ export class TurnoService {
     return this.http.patch<Turno>(`${this.base}/${id}/confirmar`, {});
   }
 
+  confirmarPorToken(token: string): Observable<Turno> {
+    return this.http.post<Turno>(`${this.base}/confirmar/token/${token}`, {});
+  }
+
   cancelar(id: number): Observable<Turno> {
     return this.http.patch<Turno>(`${this.base}/${id}/cancelar`, {});
   }

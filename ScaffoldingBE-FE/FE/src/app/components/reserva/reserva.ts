@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PeluqueroService } from '../../shared/services/peluquero.service';
 import { TratamientoService } from '../../shared/services/tratamiento.service';
 import { TurnoService } from '../../shared/services/turno.service';
@@ -18,6 +18,7 @@ export class Reserva implements OnInit {
   private tratamientoService = inject(TratamientoService);
   private turnoService = inject(TurnoService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   peluqueros = signal<Peluquero[]>([]);
   tratamientos = signal<Tratamiento[]>([]);
@@ -50,6 +51,13 @@ export class Reserva implements OnInit {
   hoy = new Date().toISOString().slice(0, 10);
 
   ngOnInit(): void {
+    // Preselección desde las páginas de Peluqueros / Tratamientos (?peluquero=&tratamiento=)
+    const qp = this.route.snapshot.queryParamMap;
+    const pPel = Number(qp.get('peluquero'));
+    const pTrat = Number(qp.get('tratamiento'));
+    if (pPel) this.peluqueroId.set(pPel);
+    if (pTrat) this.tratamientoId.set(pTrat);
+
     this.peluqueroService.list().subscribe({
       next: (p) => { this.peluqueros.set(p); this.tryFinishCatalog(); },
       error: () => { this.error.set('No se pudo cargar el catálogo.'); this.loadingCatalog.set(false); }

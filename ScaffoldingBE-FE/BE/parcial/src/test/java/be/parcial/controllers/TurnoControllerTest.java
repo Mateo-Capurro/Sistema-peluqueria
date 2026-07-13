@@ -135,6 +135,19 @@ class TurnoControllerTest {
     }
 
     @Test
+    @DisplayName("POST /confirmar/token/{token} returns 200")
+    void confirmarPorToken_returns200() throws Exception {
+        when(turnoService.confirmarPorToken("tok-1")).thenReturn(turnoDTO);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                        post("/api/turnos/confirmar/token/tok-1"))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        verify(turnoService).confirmarPorToken("tok-1");
+    }
+
+    @Test
     @DisplayName("PATCH /{id}/cancelar returns 200")
     void cancelar_returns200() throws Exception {
         when(turnoService.cancelar("juan", 1L)).thenReturn(turnoDTO);
