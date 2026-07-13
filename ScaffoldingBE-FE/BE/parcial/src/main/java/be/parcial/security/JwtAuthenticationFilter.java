@@ -36,7 +36,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsername(jwt);
+
+        // Un token vencido/inválido no debe romper la request: si el parseo falla,
+        // seguimos sin autenticar. Los endpoints públicos (p.ej. confirmar por token
+        // desde el email) funcionan aunque el navegador mande un JWT viejo.
+        String username = null;
+        try {
+            username = jwtService.extractUsername(jwt);
+        } catch (Exception e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
