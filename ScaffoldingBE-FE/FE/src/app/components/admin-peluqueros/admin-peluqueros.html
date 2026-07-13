@@ -1,101 +1,87 @@
 <div class="space-y-6 max-w-3xl">
-  <h1 class="text-2xl font-bold text-gray-900">Administrar peluqueros</h1>
+  <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Administrar estilistas</h1>
 
   @if (error()) {
-    <div class="p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">{{ error() }}</div>
+    <div class="p-3 rounded-xl text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
   }
 
   <!-- Formulario -->
-  <div class="p-5 bg-white rounded-lg shadow-sm border border-gray-200 space-y-4">
-    <h2 class="font-semibold text-gray-900">{{ editingId() == null ? 'Nuevo peluquero' : 'Editar jornada / estado' }}</h2>
+  <div class="alma-card space-y-4">
+    <h2 class="font-serif text-xl font-semibold text-alma-ink">{{ editingId() == null ? 'Nuevo estilista' : 'Editar jornada / estado' }}</h2>
 
     @if (editingId() == null) {
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-          <input type="text" [(ngModel)]="username"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="alma-label">Usuario</label>
+          <input type="text" [(ngModel)]="username" class="alma-input">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-          <input type="password" [(ngModel)]="password"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="alma-label">Contrase&ntilde;a</label>
+          <input type="password" [(ngModel)]="password" class="alma-input">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-          <input type="text" [(ngModel)]="name"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="alma-label">Nombre completo</label>
+          <input type="text" [(ngModel)]="name" class="alma-input">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input type="email" [(ngModel)]="email"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="alma-label">Email</label>
+          <input type="email" [(ngModel)]="email" class="alma-input">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-          <input type="text" [(ngModel)]="telefono"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="alma-label">Tel&eacute;fono</label>
+          <input type="text" [(ngModel)]="telefono" class="alma-input">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">DNI</label>
-          <input type="text" [(ngModel)]="dni"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label class="alma-label">DNI</label>
+          <input type="text" [(ngModel)]="dni" class="alma-input">
         </div>
       </div>
     }
 
     <div class="grid gap-4 sm:grid-cols-2">
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Hora inicio</label>
-        <input type="time" [(ngModel)]="horaInicio"
-          class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="alma-label">Hora inicio</label>
+        <input type="time" [(ngModel)]="horaInicio" class="alma-input">
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Hora fin</label>
-        <input type="time" [(ngModel)]="horaFin"
-          class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="alma-label">Hora fin</label>
+        <input type="time" [(ngModel)]="horaFin" class="alma-input">
       </div>
     </div>
     @if (horaInicio && horaFin && horaInicio >= horaFin) {
-      <p class="text-sm text-amber-600">La hora de inicio debe ser anterior a la de fin.</p>
+      <p class="text-sm" style="color: oklch(0.62 0.14 30);">La hora de inicio debe ser anterior a la de fin.</p>
     }
 
     @if (editingId() != null) {
-      <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input type="checkbox" [(ngModel)]="activo"> Activo
+      <label class="flex items-center gap-2 text-sm text-alma-body">
+        <input type="checkbox" [(ngModel)]="activo" class="accent-alma-accent"> Activo
       </label>
     }
 
     <div class="flex gap-2">
-      <button (click)="guardar()" [disabled]="!formValido || saving()"
-        class="bg-blue-600 text-white rounded px-4 py-2 font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+      <button (click)="guardar()" [disabled]="!formValido || saving()" class="alma-btn">
         {{ saving() ? 'Guardando...' : (editingId() == null ? 'Crear' : 'Guardar cambios') }}
       </button>
       @if (editingId() != null) {
-        <button (click)="nuevo()" class="border border-gray-300 text-gray-700 rounded px-4 py-2 font-medium hover:bg-gray-50">
-          Cancelar
-        </button>
+        <button (click)="nuevo()" class="alma-btn-outline">Cancelar</button>
       }
     </div>
   </div>
 
   <!-- Lista -->
   @if (loading()) {
-    <p class="text-gray-500">Cargando...</p>
+    <p class="text-alma-body">Cargando...</p>
   } @else if (peluqueros().length === 0) {
-    <p class="text-gray-500">No hay peluqueros activos.</p>
+    <p class="text-alma-body">No hay estilistas activos.</p>
   } @else {
     <div class="space-y-2">
       @for (p of peluqueros(); track p.id) {
-        <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-wrap items-center gap-3">
+        <div class="alma-card !p-5 flex flex-wrap items-center gap-3">
           <div class="flex-1 min-w-[200px]">
-            <p class="font-semibold text-gray-900">{{ p.nombre }}</p>
-            <p class="text-sm text-gray-600">Atiende {{ p.horaInicio.slice(0,5) }} a {{ p.horaFin.slice(0,5) }}</p>
+            <p class="font-serif text-lg font-semibold text-alma-ink">{{ p.nombre }}</p>
+            <p class="text-sm text-alma-body">Atiende {{ p.horaInicio.slice(0,5) }} a {{ p.horaFin.slice(0,5) }}</p>
           </div>
-          <button (click)="editar(p)"
-            class="text-sm border border-blue-300 text-blue-700 rounded px-3 py-1.5 font-medium hover:bg-blue-50">
-            Editar
-          </button>
+          <button (click)="editar(p)" class="alma-btn-outline !px-4 !py-2 text-sm">Editar</button>
         </div>
       }
     </div>

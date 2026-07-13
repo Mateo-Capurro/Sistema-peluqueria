@@ -1,41 +1,54 @@
-<div class="space-y-6">
-  <div>
-    <h1 class="text-2xl font-bold text-gray-900">Hola, {{ auth.username() }}</h1>
-    <p class="text-gray-600">Bienvenido al sistema de turnos de la peluquer&iacute;a.</p>
-  </div>
+<div class="space-y-12">
+  <!-- HERO -->
+  <section class="relative overflow-hidden rounded-3xl px-8 md:px-14 py-16 md:py-24 flex items-end min-h-[360px]"
+           style="background: linear-gradient(120deg, oklch(0.30 0.02 40), oklch(0.16 0.02 40));">
+    <div class="max-w-xl relative z-10">
+      <div class="text-[13px] font-bold tracking-[2px] uppercase text-alma-accent-light mb-4">
+        C&oacute;rdoba, Argentina &middot; Desde 2023
+      </div>
+      <h1 class="font-serif text-4xl md:text-6xl leading-tight text-alma-cream mb-4">
+        Hola, {{ auth.username() }}.
+      </h1>
+      <p class="text-[17px] leading-relaxed mb-8 max-w-md" style="color: oklch(0.82 0.015 70);">
+        Cortes, color y cuidado capilar hechos a medida por un equipo que entiende tu estilo.
+      </p>
+      @if (auth.role() === 'CLIENTE') {
+        <a routerLink="/reservar" class="alma-btn-cream">Reservar cita &rarr;</a>
+      }
+    </div>
+  </section>
 
-  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    <a routerLink="/tratamientos"
-       class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
-      <h2 class="font-semibold text-gray-900">Tratamientos</h2>
-      <p class="text-sm text-gray-600">Ver los servicios disponibles.</p>
-    </a>
-
-    <a routerLink="/peluqueros"
-       class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
-      <h2 class="font-semibold text-gray-900">Peluqueros</h2>
-      <p class="text-sm text-gray-600">Conoc&eacute; al equipo.</p>
-    </a>
-
-    @if (auth.role() === 'CLIENTE') {
-      <a routerLink="/reservar"
-         class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
-        <h2 class="font-semibold text-gray-900">Reservar turno</h2>
-        <p class="text-sm text-gray-600">Eleg&iacute; d&iacute;a y horario.</p>
+  <!-- ACCESOS -->
+  <section>
+    <h2 class="font-serif text-3xl font-semibold mb-6">Explor&aacute;</h2>
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <a routerLink="/tratamientos" class="alma-card hover:shadow-card transition-shadow block">
+        <h3 class="font-serif text-xl font-semibold mb-1">Servicios</h3>
+        <p class="text-sm text-alma-body">Ver los servicios disponibles.</p>
       </a>
-      <a routerLink="/mis-turnos"
-         class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
-        <h2 class="font-semibold text-gray-900">Mis turnos</h2>
-        <p class="text-sm text-gray-600">Confirm&aacute; o cancel&aacute; tus turnos.</p>
-      </a>
-    }
 
-    @if (auth.role() === 'PELUQUERO') {
-      <a routerLink="/agenda"
-         class="block p-5 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow">
-        <h2 class="font-semibold text-gray-900">Mi agenda</h2>
-        <p class="text-sm text-gray-600">Ve&eacute; tus turnos asignados.</p>
+      <a routerLink="/peluqueros" class="alma-card hover:shadow-card transition-shadow block">
+        <h3 class="font-serif text-xl font-semibold mb-1">Estilistas</h3>
+        <p class="text-sm text-alma-body">Conoc&eacute; al equipo.</p>
       </a>
-    }
-  </div>
+
+      @if (auth.role() === 'CLIENTE') {
+        <a routerLink="/reservar" class="alma-card hover:shadow-card transition-shadow block">
+          <h3 class="font-serif text-xl font-semibold mb-1">Reservar cita</h3>
+          <p class="text-sm text-alma-body">Eleg&iacute; d&iacute;a y horario.</p>
+        </a>
+        <a routerLink="/mis-turnos" class="alma-card hover:shadow-card transition-shadow block">
+          <h3 class="font-serif text-xl font-semibold mb-1">Mi cuenta</h3>
+          <p class="text-sm text-alma-body">Confirm&aacute; o cancel&aacute; tus citas.</p>
+        </a>
+      }
+
+      @if (auth.role() === 'PELUQUERO') {
+        <a routerLink="/agenda" class="alma-card hover:shadow-card transition-shadow block">
+          <h3 class="font-serif text-xl font-semibold mb-1">Mi agenda</h3>
+          <p class="text-sm text-alma-body">Ve&eacute; tus citas asignadas.</p>
+        </a>
+      }
+    </div>
+  </section>
 </div>

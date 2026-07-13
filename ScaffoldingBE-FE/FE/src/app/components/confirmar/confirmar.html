@@ -1,33 +1,28 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-  <div class="w-full max-w-md bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+<div class="min-h-screen flex items-center justify-center bg-alma-bg p-4">
+  <div class="w-full max-w-md bg-alma-card rounded-2xl shadow-card border border-alma-line p-8 text-center">
 
     @if (estado() === 'cargando') {
-      <p class="text-gray-500">Confirmando tu turno...</p>
+      <p class="text-alma-body">Confirmando tu cita...</p>
     }
 
     @if (estado() === 'ok') {
-      <div class="text-4xl mb-2">✅</div>
-      <h1 class="text-xl font-bold text-gray-900 mb-2">¡Turno confirmado!</h1>
+      <div class="w-16 h-16 rounded-full bg-alma-accent text-white flex items-center justify-center text-3xl mx-auto mb-5">✓</div>
+      <h1 class="font-serif text-2xl font-semibold text-alma-ink mb-2">&iexcl;Cita confirmada!</h1>
       @if (turno(); as t) {
-        <p class="text-gray-600 text-sm">
+        <p class="text-alma-body text-sm">
           {{ t.tratamientoNombre }} con {{ t.peluqueroNombre }}<br>
           {{ fechaHora(t.inicio) }} hs
         </p>
       }
-      <a routerLink="/mis-turnos"
-         class="inline-block mt-5 bg-blue-600 text-white rounded px-4 py-2 text-sm font-medium hover:bg-blue-700">
-        Ver mis turnos
-      </a>
+      <a routerLink="/mis-turnos" class="alma-btn mt-6">Ver mi cuenta</a>
     }
 
     @if (estado() === 'error') {
-      <div class="text-4xl mb-2">⚠️</div>
-      <h1 class="text-xl font-bold text-gray-900 mb-2">No se pudo confirmar</h1>
-      <p class="text-gray-600 text-sm">{{ mensaje() }}</p>
-      <a routerLink="/"
-         class="inline-block mt-5 bg-gray-600 text-white rounded px-4 py-2 text-sm font-medium hover:bg-gray-700">
-        Ir al inicio
-      </a>
+      <div class="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-5"
+           style="background: oklch(0.93 0.05 40);">⚠️</div>
+      <h1 class="font-serif text-2xl font-semibold text-alma-ink mb-2">No se pudo confirmar</h1>
+      <p class="text-alma-body text-sm">{{ mensaje() }}</p>
+      <a routerLink="/" class="alma-btn-outline mt-6">Ir al inicio</a>
     }
 
   </div>

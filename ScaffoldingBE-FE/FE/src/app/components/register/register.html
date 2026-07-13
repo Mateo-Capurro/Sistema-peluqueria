@@ -1,79 +1,66 @@
-<h2 class="text-2xl font-bold text-center text-gray-900 mb-6">Crear Cuenta</h2>
+<h2 class="font-serif text-2xl font-semibold text-center text-alma-ink mb-6">Crear cuenta</h2>
 
 @if (error()) {
-  <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">
+  <div class="mb-4 p-3 rounded-xl text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">
     {{ error() }}
   </div>
 }
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-    <input type="text" formControlName="name"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-           placeholder="Tu nombre">
+    <label class="alma-label">Nombre</label>
+    <input type="text" formControlName="name" class="alma-input" placeholder="Tu nombre">
     @if (form.controls.name.touched && form.controls.name.invalid) {
-      <p class="text-red-500 text-xs mt-1">Nombre requerido (m&aacute;x 100)</p>
+      <p class="text-alma-danger text-xs mt-1">Nombre requerido (m&aacute;x 100)</p>
     }
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-    <input type="text" formControlName="username"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-           placeholder="tu_usuario">
+    <label class="alma-label">Usuario</label>
+    <input type="text" formControlName="username" class="alma-input" placeholder="tu_usuario">
     @if (form.controls.username.touched && form.controls.username.invalid) {
-      <p class="text-red-500 text-xs mt-1">Usuario requerido (3-50 caracteres)</p>
+      <p class="text-alma-danger text-xs mt-1">Usuario requerido (3-50 caracteres)</p>
     }
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-    <input type="email" formControlName="email"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-           placeholder="tu@email.com">
+    <label class="alma-label">Email</label>
+    <input type="email" formControlName="email" class="alma-input" placeholder="tu@email.com">
     @if (form.controls.email.touched && form.controls.email.invalid) {
-      <p class="text-red-500 text-xs mt-1">Email v&aacute;lido requerido</p>
+      <p class="text-alma-danger text-xs mt-1">Email v&aacute;lido requerido</p>
     }
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Tel&eacute;fono</label>
-    <input type="tel" formControlName="telefono"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-           placeholder="1100000000">
+    <label class="alma-label">Tel&eacute;fono</label>
+    <input type="tel" formControlName="telefono" class="alma-input" placeholder="351 412 3456">
     @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
-      <p class="text-red-500 text-xs mt-1">Tel&eacute;fono requerido</p>
+      <p class="text-alma-danger text-xs mt-1">Tel&eacute;fono requerido</p>
     }
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">DNI</label>
-    <input type="text" formControlName="dni"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-           placeholder="30000000">
+    <label class="alma-label">DNI</label>
+    <input type="text" formControlName="dni" class="alma-input" placeholder="30000000">
     @if (form.controls.dni.touched && form.controls.dni.invalid) {
-      <p class="text-red-500 text-xs mt-1">DNI requerido</p>
+      <p class="text-alma-danger text-xs mt-1">DNI requerido</p>
     }
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-1">Contrase&ntilde;a</label>
-    <input type="password" formControlName="password"
-           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-           placeholder="M&iacute;nimo 6 caracteres">
+    <label class="alma-label">Contrase&ntilde;a</label>
+    <input type="password" formControlName="password" class="alma-input" placeholder="M&iacute;nimo 6 caracteres">
     @if (form.controls.password.touched && form.controls.password.invalid) {
-      <p class="text-red-500 text-xs mt-1">M&iacute;nimo 6 caracteres</p>
+      <p class="text-alma-danger text-xs mt-1">M&iacute;nimo 6 caracteres</p>
     }
   </div>
 
-  <button type="submit" [disabled]="form.invalid"
-          class="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+  <button type="submit" [disabled]="form.invalid" class="alma-btn w-full">
     Registrarse
   </button>
 </form>
 
-<p class="text-center text-sm text-gray-600 mt-4">
+<p class="text-center text-sm text-alma-body mt-5">
   &iquest;Ya tienes cuenta?
-  <a routerLink="/auth/login" class="text-blue-600 hover:underline">Inicia sesi&oacute;n</a>
+  <a routerLink="/auth/login" class="alma-link">Inicia sesi&oacute;n</a>
 </p>

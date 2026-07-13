@@ -1,40 +1,42 @@
-<div class="space-y-4 max-w-3xl">
-  <h1 class="text-2xl font-bold text-gray-900">Mis turnos</h1>
+<div class="space-y-6 max-w-3xl">
+  <div>
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Mi cuenta</h1>
+    <p class="text-alma-body mt-1">Aqu&iacute; tienes tus citas.</p>
+  </div>
 
   @if (error()) {
-    <div class="p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">{{ error() }}</div>
+    <div class="p-3 rounded-xl text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="text-gray-500">Cargando...</p>
+    <p class="text-alma-body">Cargando...</p>
   } @else if (turnos().length === 0) {
-    <p class="text-gray-500">Todavía no reservaste ningún turno.</p>
+    <div class="alma-card text-center" style="background: oklch(0.93 0.02 60);">
+      <p class="text-alma-body mb-4">Todav&iacute;a no reservaste ninguna cita.</p>
+      <a routerLink="/reservar" class="alma-btn">Reservar ahora</a>
+    </div>
   } @else {
     <div class="space-y-3">
       @for (t of turnos(); track t.id) {
-        <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-wrap items-center gap-3">
+        <div class="alma-card !p-5 flex flex-wrap items-center gap-3">
           <div class="flex-1 min-w-[200px]">
-            <p class="font-semibold text-gray-900">{{ t.tratamientoNombre }}</p>
-            <p class="text-sm text-gray-600">con {{ t.peluqueroNombre }}</p>
-            <p class="text-sm text-gray-600">{{ fecha(t.inicio) }} · {{ hora(t.inicio) }}–{{ hora(t.fin) }}</p>
+            <p class="font-serif text-lg font-semibold text-alma-ink">{{ t.tratamientoNombre }}</p>
+            <p class="text-sm text-alma-body">con {{ t.peluqueroNombre }}</p>
+            <p class="text-sm text-alma-body">{{ fecha(t.inicio) }} · {{ hora(t.inicio) }}–{{ hora(t.fin) }}</p>
           </div>
 
-          <span class="text-xs font-medium px-2 py-1 rounded-full" [class]="badge(t.estado)">{{ t.estado }}</span>
+          <span class="text-xs font-bold px-3 py-1.5 rounded-pill" [class]="badge(t.estado)">{{ t.estado }}</span>
 
           <div class="flex gap-2">
             @if (t.estado === 'PENDIENTE') {
-              <button
-                (click)="confirmar(t)"
-                [disabled]="accionando() !== null"
-                class="text-sm bg-blue-600 text-white rounded px-3 py-1.5 font-medium hover:bg-blue-700 disabled:opacity-50">
+              <button (click)="confirmar(t)" [disabled]="accionando() !== null"
+                class="alma-btn !px-4 !py-2 text-sm">
                 {{ accionando() === t.id ? '...' : 'Confirmar' }}
               </button>
             }
             @if (t.estado === 'PENDIENTE' || t.estado === 'CONFIRMADO') {
-              <button
-                (click)="cancelar(t)"
-                [disabled]="accionando() !== null"
-                class="text-sm border border-red-300 text-red-700 rounded px-3 py-1.5 font-medium hover:bg-red-50 disabled:opacity-50">
+              <button (click)="cancelar(t)" [disabled]="accionando() !== null"
+                class="alma-btn-outline !px-4 !py-2 text-sm">
                 {{ accionando() === t.id ? '...' : 'Cancelar' }}
               </button>
             }

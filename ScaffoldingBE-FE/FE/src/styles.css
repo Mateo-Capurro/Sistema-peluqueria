@@ -13,3 +13,64 @@
 html, body {
   height: 100%;
 }
+
+body {
+  background: theme('colors.alma.bg');
+  color: theme('colors.alma.ink');
+  font-family: theme('fontFamily.sans');
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  /* Títulos con serif */
+  .alma-title {
+    @apply font-serif text-alma-ink;
+  }
+
+  /* Botón acento (pill terracota) */
+  .alma-btn {
+    @apply inline-flex items-center justify-center gap-2 font-sans font-bold text-white bg-alma-accent
+           rounded-pill px-6 py-3 text-sm cursor-pointer transition-colors
+           hover:bg-alma-accent-light disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Botón claro (crema, sobre fondos oscuros o hero) */
+  .alma-btn-cream {
+    @apply inline-flex items-center justify-center gap-2 font-sans font-bold text-alma-ink bg-alma-cream
+           rounded-pill px-6 py-3 text-sm cursor-pointer transition-opacity hover:opacity-90;
+  }
+
+  /* Botón outline */
+  .alma-btn-outline {
+    @apply inline-flex items-center justify-center gap-2 font-sans font-bold text-alma-ink bg-transparent
+           border-[1.5px] border-alma-ink rounded-pill px-5 py-2.5 text-sm cursor-pointer transition-colors
+           hover:bg-alma-ink hover:text-alma-cream;
+  }
+
+  /* Card */
+  .alma-card {
+    @apply bg-alma-card border border-alma-line rounded-2xl p-7;
+  }
+
+  /* Input / textarea / select */
+  .alma-input {
+    @apply w-full font-sans text-[15px] px-3.5 py-3 rounded-xl border-[1.5px] border-alma-line
+           bg-alma-card text-alma-ink placeholder:text-alma-muted
+           focus:outline-none focus:border-alma-accent transition-colors;
+  }
+
+  .alma-label {
+    @apply block text-[12.5px] font-bold text-alma-heading mb-1.5;
+  }
+
+  /* Chip / badge */
+  .alma-chip {
+    @apply inline-block text-[11px] font-semibold text-alma-accent bg-alma-accent-soft
+           px-2.5 py-1 rounded-pill;
+  }
+
+  /* Link de acento */
+  .alma-link {
+    @apply text-alma-accent font-bold cursor-pointer hover:underline;
+  }
+}

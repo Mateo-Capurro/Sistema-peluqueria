@@ -1,10 +1,11 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TurnoService } from '../../shared/services/turno.service';
 import { Turno } from '../../shared/models/turno.model';
 
 @Component({
   selector: 'app-mis-turnos',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './mis-turnos.html'
 })
 export class MisTurnos implements OnInit {
@@ -60,11 +61,11 @@ export class MisTurnos implements OnInit {
 
   badge(estado: string): string {
     switch (estado) {
-      case 'PENDIENTE':  return 'bg-amber-100 text-amber-800';
-      case 'CONFIRMADO': return 'bg-blue-100 text-blue-800';
-      case 'COMPLETADO': return 'bg-green-100 text-green-800';
-      case 'CANCELADO':  return 'bg-gray-100 text-gray-600';
-      default:           return 'bg-gray-100 text-gray-600';
+      case 'PENDIENTE':  return 'bg-alma-soft text-alma-heading';
+      case 'CONFIRMADO': return 'bg-alma-accent-soft text-alma-accent';
+      case 'COMPLETADO': return 'bg-alma-accent-soft text-alma-ok';
+      case 'CANCELADO':  return 'bg-alma-soft text-alma-muted';
+      default:           return 'bg-alma-soft text-alma-muted';
     }
   }
 }
