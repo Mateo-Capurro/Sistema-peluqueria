@@ -5,32 +5,36 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Paleta "Salón Alma" — terracota cálido sobre crema (oklch, del template de diseño).
+      // Paleta "Salón Alma" — editorial cálido: oro sobre crema (del template de diseño Figma).
       colors: {
         alma: {
-          bg:      'oklch(0.97 0.01 75)',    // fondo de página
-          card:    'oklch(0.99 0.006 75)',   // fondo de card
-          cream:   'oklch(0.98 0.005 80)',   // crema claro (texto sobre oscuro / botón claro)
-          ink:     'oklch(0.16 0.02 40)',    // marrón oscuro (footer, texto fuerte)
-          heading: 'oklch(0.30 0.02 40)',    // títulos
-          body:    'oklch(0.48 0.02 50)',    // texto de cuerpo
-          muted:   'oklch(0.55 0.02 50)',    // texto atenuado
-          line:    'oklch(0.88 0.015 60)',   // bordes / separadores
-          accent:  'oklch(0.60 0.18 38)',    // terracota (acento principal)
-          'accent-light': 'oklch(0.72 0.16 38)',
-          'accent-soft':  'oklch(0.93 0.05 40)',
-          footer:  'oklch(0.75 0.02 60)',    // texto de footer
-          soft:    'oklch(0.93 0.02 60)',    // panel suave
+          bg:      '#F5F1E8',   // fondo de página (crema)
+          card:    '#FDFAF4',   // fondo de card
+          cream:   '#F5F1E8',   // crema claro (texto sobre oscuro / botón claro)
+          ink:     '#1C1A17',   // tinta casi negra (header, footer, texto fuerte)
+          heading: '#1C1A17',   // títulos
+          body:    '#4A4534',   // texto de cuerpo
+          muted:   '#6B6556',   // texto atenuado
+          line:    '#DAD3C4',   // bordes / separadores (~12% tinta)
+          accent:  '#C9A96E',   // oro (acento principal)
+          'accent-light': '#D4B888',
+          'accent-soft':  '#EFE6D3',
+          footer:  '#A79E88',   // texto de footer (crema atenuado)
+          soft:    '#EDE8DC',   // panel suave (secondary)
           ok:      'oklch(0.52 0.05 140)',
-          danger:  'oklch(0.55 0.14 30)',
+          danger:  '#B4433B',
         },
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans:  ['Manrope', 'system-ui', 'sans-serif'],
+        sans:  ['"DM Sans"', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         pill: '100px',
+      },
+      letterSpacing: {
+        widest: '0.15em',
+        editorial: '0.3em',
       },
       boxShadow: {
         card: '0 1px 3px oklch(0.05 0 0 / 0.08)',

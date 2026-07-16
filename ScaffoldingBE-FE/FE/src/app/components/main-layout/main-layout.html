@@ -1,47 +1,62 @@
 <div class="min-h-screen flex flex-col bg-alma-bg text-alma-ink">
-  <header class="sticky top-0 z-40 backdrop-blur border-b border-alma-line"
-          style="background: oklch(0.97 0.01 75 / 0.92);">
-    <div class="flex items-center justify-between gap-6 px-6 md:px-12 py-4 max-w-7xl mx-auto">
-      <a routerLink="/" class="font-serif text-2xl font-bold tracking-wide">Sal&oacute;n Alma</a>
+  <header class="sticky top-0 z-40 bg-alma-ink text-alma-cream border-b border-white/10">
+    <div class="flex items-center justify-between gap-6 px-6 md:px-12 h-16 max-w-7xl mx-auto">
+      <a routerLink="/" class="flex items-center gap-2 group">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="w-[18px] h-[18px] text-alma-accent rotate-90 group-hover:rotate-[110deg] transition-transform duration-300">
+          <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>
+        </svg>
+        <span class="font-sans text-xl uppercase font-light text-alma-cream" style="letter-spacing:0.2em">Sal&oacute;n Alma</span>
+      </a>
 
-      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
-        <a routerLink="/tratamientos" routerLinkActive="text-alma-accent border-alma-accent"
-           class="pb-1 border-b-2 border-transparent hover:text-alma-accent transition-colors">Servicios</a>
-        <a routerLink="/peluqueros" routerLinkActive="text-alma-accent border-alma-accent"
-           class="pb-1 border-b-2 border-transparent hover:text-alma-accent transition-colors">Estilistas</a>
+      <nav class="hidden md:flex items-center gap-10 text-sm uppercase" style="letter-spacing:0.15em">
+        <a routerLink="/tratamientos" routerLinkActive="text-alma-accent"
+           class="text-alma-cream/70 hover:text-alma-accent transition-colors">Servicios</a>
+        <a routerLink="/peluqueros" routerLinkActive="text-alma-accent"
+           class="text-alma-cream/70 hover:text-alma-accent transition-colors">Estilistas</a>
 
         @if (auth.role() === 'CLIENTE') {
-          <a routerLink="/mis-turnos" routerLinkActive="text-alma-accent border-alma-accent"
-             class="pb-1 border-b-2 border-transparent hover:text-alma-accent transition-colors">Mi cuenta</a>
+          <a routerLink="/mis-turnos" routerLinkActive="text-alma-accent"
+             class="text-alma-cream/70 hover:text-alma-accent transition-colors">Mi cuenta</a>
         }
         @if (auth.role() === 'PELUQUERO') {
-          <a routerLink="/agenda" routerLinkActive="text-alma-accent border-alma-accent"
-             class="pb-1 border-b-2 border-transparent hover:text-alma-accent transition-colors">Agenda</a>
+          <a routerLink="/agenda" routerLinkActive="text-alma-accent"
+             class="text-alma-cream/70 hover:text-alma-accent transition-colors">Agenda</a>
         }
         @if (auth.role() === 'ADMIN') {
-          <a routerLink="/admin/tratamientos" routerLinkActive="text-alma-accent border-alma-accent"
-             class="pb-1 border-b-2 border-transparent hover:text-alma-accent transition-colors">Servicios</a>
-          <a routerLink="/admin/peluqueros" routerLinkActive="text-alma-accent border-alma-accent"
-             class="pb-1 border-b-2 border-transparent hover:text-alma-accent transition-colors">Estilistas</a>
+          <a routerLink="/admin/tratamientos" routerLinkActive="text-alma-accent"
+             class="text-alma-cream/70 hover:text-alma-accent transition-colors">Servicios</a>
+          <a routerLink="/admin/peluqueros" routerLinkActive="text-alma-accent"
+             class="text-alma-cream/70 hover:text-alma-accent transition-colors">Estilistas</a>
         }
       </nav>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-4">
         @if (auth.role() === 'CLIENTE') {
-          <a routerLink="/reservar" class="alma-btn hidden sm:inline-flex">Reservar cita</a>
+          <a routerLink="/reservar" class="alma-btn hidden sm:inline-flex !px-6 !py-2.5">Reservar cita</a>
         }
-        <span class="hidden lg:inline text-sm text-alma-body">{{ auth.username() }}</span>
-        <button class="alma-btn-outline" (click)="logout()">Salir</button>
+        <span class="hidden lg:inline text-sm text-alma-cream/60">{{ auth.username() }}</span>
+        <button
+          class="inline-flex items-center gap-2 font-sans font-medium text-alma-cream/80 bg-transparent border border-alma-cream/30 px-5 py-2.5 text-xs uppercase tracking-widest cursor-pointer transition-colors hover:border-alma-accent hover:text-alma-accent"
+          (click)="logout()">Salir</button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 w-full max-w-7xl mx-auto px-6 md:px-12 py-10">
+  <main class="flex-1 w-full max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16">
     <router-outlet />
   </main>
 
-  <footer class="px-6 md:px-12 py-10 bg-alma-ink text-alma-footer flex flex-col sm:flex-row gap-2 justify-between items-center">
-    <div class="font-serif text-xl text-alma-cream">Sal&oacute;n Alma</div>
-    <div class="text-[13px]">Av. Col&oacute;n 245, C&oacute;rdoba &middot; Mar&ndash;S&aacute;b 10:00&ndash;20:00</div>
+  <footer class="bg-alma-ink text-alma-footer py-8">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="w-[14px] h-[14px] text-alma-accent rotate-90">
+          <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>
+        </svg>
+        <span class="text-xs uppercase tracking-widest text-alma-cream/70">Sal&oacute;n Alma</span>
+      </div>
+      <p class="text-xs">Av. Col&oacute;n 245, C&oacute;rdoba &middot; Mar&ndash;S&aacute;b 10:00&ndash;20:00</p>
+    </div>
   </footer>
 </div>

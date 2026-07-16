@@ -27,50 +27,55 @@ body {
     @apply font-serif text-alma-ink;
   }
 
-  /* Botón acento (pill terracota) */
+  /* Eyebrow / kicker editorial (mayúsculas doradas espaciadas) */
+  .alma-eyebrow {
+    @apply text-alma-accent text-xs uppercase tracking-editorial;
+  }
+
+  /* Botón acento (rectangular oro, uppercase) */
   .alma-btn {
-    @apply inline-flex items-center justify-center gap-2 font-sans font-bold text-white bg-alma-accent
-           rounded-pill px-6 py-3 text-sm cursor-pointer transition-colors
+    @apply inline-flex items-center justify-center gap-2 font-sans font-medium text-alma-ink bg-alma-accent
+           px-8 py-4 text-xs uppercase tracking-widest cursor-pointer transition-colors
            hover:bg-alma-accent-light disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Botón claro (crema, sobre fondos oscuros o hero) */
   .alma-btn-cream {
-    @apply inline-flex items-center justify-center gap-2 font-sans font-bold text-alma-ink bg-alma-cream
-           rounded-pill px-6 py-3 text-sm cursor-pointer transition-opacity hover:opacity-90;
+    @apply inline-flex items-center justify-center gap-2 font-sans font-medium text-alma-ink bg-alma-cream
+           px-8 py-4 text-xs uppercase tracking-widest cursor-pointer transition-colors hover:bg-alma-accent;
   }
 
-  /* Botón outline */
+  /* Botón outline (hairline, uppercase) */
   .alma-btn-outline {
-    @apply inline-flex items-center justify-center gap-2 font-sans font-bold text-alma-ink bg-transparent
-           border-[1.5px] border-alma-ink rounded-pill px-5 py-2.5 text-sm cursor-pointer transition-colors
+    @apply inline-flex items-center justify-center gap-2 font-sans font-medium text-alma-ink bg-transparent
+           border border-alma-ink px-7 py-3.5 text-xs uppercase tracking-widest cursor-pointer transition-colors
            hover:bg-alma-ink hover:text-alma-cream;
   }
 
-  /* Card */
+  /* Card (panel plano con borde hairline) */
   .alma-card {
-    @apply bg-alma-card border border-alma-line rounded-2xl p-7;
+    @apply bg-alma-card border border-alma-line p-8 transition-colors hover:bg-alma-soft;
   }
 
-  /* Input / textarea / select */
+  /* Input / textarea / select (subrayado editorial) */
   .alma-input {
-    @apply w-full font-sans text-[15px] px-3.5 py-3 rounded-xl border-[1.5px] border-alma-line
-           bg-alma-card text-alma-ink placeholder:text-alma-muted
+    @apply w-full font-sans text-sm px-0 py-3 bg-transparent border-0 border-b border-alma-line
+           text-alma-ink placeholder:text-alma-muted/60
            focus:outline-none focus:border-alma-accent transition-colors;
   }
 
   .alma-label {
-    @apply block text-[12.5px] font-bold text-alma-heading mb-1.5;
+    @apply block text-xs uppercase tracking-widest text-alma-muted mb-2;
   }
 
   /* Chip / badge */
   .alma-chip {
-    @apply inline-block text-[11px] font-semibold text-alma-accent bg-alma-accent-soft
-           px-2.5 py-1 rounded-pill;
+    @apply inline-block text-[11px] font-semibold uppercase tracking-widest text-alma-accent bg-alma-accent-soft
+           px-2.5 py-1;
   }
 
   /* Link de acento */
   .alma-link {
-    @apply text-alma-accent font-bold cursor-pointer hover:underline;
+    @apply text-alma-accent font-medium cursor-pointer hover:underline;
   }
 }

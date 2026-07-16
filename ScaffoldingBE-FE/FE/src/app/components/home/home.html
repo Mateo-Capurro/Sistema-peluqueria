@@ -1,54 +1,96 @@
-<div class="space-y-12">
-  <!-- HERO -->
-  <section class="relative overflow-hidden rounded-3xl px-8 md:px-14 py-16 md:py-24 flex items-end min-h-[360px]"
-           style="background: linear-gradient(120deg, oklch(0.30 0.02 40), oklch(0.16 0.02 40));">
-    <div class="max-w-xl relative z-10">
-      <div class="text-[13px] font-bold tracking-[2px] uppercase text-alma-accent-light mb-4">
-        C&oacute;rdoba, Argentina &middot; Desde 2023
-      </div>
-      <h1 class="font-serif text-4xl md:text-6xl leading-tight text-alma-cream mb-4">
-        Hola, {{ auth.username() }}.
+<!-- ── HERO ───────────────────────────────────────────── -->
+<section id="inicio"
+         class="relative -mt-10 md:-mt-16 -mx-6 md:-mx-12 min-h-[70vh] flex items-end pb-16 md:pb-24 bg-alma-ink overflow-hidden">
+  <!-- Imagen de fondo -->
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&h=1000&fit=crop&auto=format"
+         alt="Sal&oacute;n de peluquer&iacute;a" class="w-full h-full object-cover opacity-30" />
+    <div class="absolute inset-0 bg-gradient-to-t from-alma-ink via-alma-ink/60 to-alma-ink/20"></div>
+  </div>
+
+  <!-- Línea decorativa vertical -->
+  <div class="absolute left-12 top-16 bottom-0 w-px bg-alma-accent/30 hidden md:block"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
+    <div class="max-w-2xl">
+      <p class="alma-eyebrow mb-6" style="letter-spacing:0.4em">C&oacute;rdoba, Argentina &middot; Desde 2023</p>
+      <h1 class="font-serif font-normal text-5xl md:text-7xl text-alma-cream leading-[1.05] mb-6">
+        Hola, <em class="text-alma-accent not-italic">{{ auth.username() }}</em>.
       </h1>
-      <p class="text-[17px] leading-relaxed mb-8 max-w-md" style="color: oklch(0.82 0.015 70);">
+      <p class="text-alma-cream/60 text-lg md:text-xl leading-relaxed mb-10 max-w-lg font-light">
         Cortes, color y cuidado capilar hechos a medida por un equipo que entiende tu estilo.
       </p>
       @if (auth.role() === 'CLIENTE') {
-        <a routerLink="/reservar" class="alma-btn-cream">Reservar cita &rarr;</a>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a routerLink="/reservar" class="alma-btn">Reservar cita &rarr;</a>
+          <a routerLink="/tratamientos" class="alma-btn-outline !border-alma-cream/30 !text-alma-cream/70 hover:!bg-transparent hover:!border-alma-accent hover:!text-alma-accent">Ver servicios</a>
+        </div>
       }
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ACCESOS -->
-  <section>
-    <h2 class="font-serif text-3xl font-semibold mb-6">Explor&aacute;</h2>
-    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      <a routerLink="/tratamientos" class="alma-card hover:shadow-card transition-shadow block">
-        <h3 class="font-serif text-xl font-semibold mb-1">Servicios</h3>
-        <p class="text-sm text-alma-body">Ver los servicios disponibles.</p>
-      </a>
-
-      <a routerLink="/peluqueros" class="alma-card hover:shadow-card transition-shadow block">
-        <h3 class="font-serif text-xl font-semibold mb-1">Estilistas</h3>
-        <p class="text-sm text-alma-body">Conoc&eacute; al equipo.</p>
-      </a>
-
-      @if (auth.role() === 'CLIENTE') {
-        <a routerLink="/reservar" class="alma-card hover:shadow-card transition-shadow block">
-          <h3 class="font-serif text-xl font-semibold mb-1">Reservar cita</h3>
-          <p class="text-sm text-alma-body">Eleg&iacute; d&iacute;a y horario.</p>
-        </a>
-        <a routerLink="/mis-turnos" class="alma-card hover:shadow-card transition-shadow block">
-          <h3 class="font-serif text-xl font-semibold mb-1">Mi cuenta</h3>
-          <p class="text-sm text-alma-body">Confirm&aacute; o cancel&aacute; tus citas.</p>
-        </a>
-      }
-
-      @if (auth.role() === 'PELUQUERO') {
-        <a routerLink="/agenda" class="alma-card hover:shadow-card transition-shadow block">
-          <h3 class="font-serif text-xl font-semibold mb-1">Mi agenda</h3>
-          <p class="text-sm text-alma-body">Ve&eacute; tus citas asignadas.</p>
-        </a>
-      }
+<!-- ── ACCESOS ────────────────────────────────────────── -->
+<section class="pt-16 md:pt-24">
+  <div class="flex items-end justify-between mb-12 md:mb-16 border-b border-alma-line pb-8">
+    <div>
+      <p class="alma-eyebrow mb-3">Explor&aacute;</p>
+      <h2 class="font-serif font-normal text-4xl md:text-5xl text-alma-ink">Tu sal&oacute;n</h2>
     </div>
-  </section>
-</div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-alma-line">
+    <a routerLink="/tratamientos"
+       class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+      <p class="alma-eyebrow mb-4">Servicios</p>
+      <h3 class="font-serif text-xl text-alma-ink mb-2">Nuestros servicios</h3>
+      <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Ver los servicios disponibles.</p>
+      <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
+        Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+      </span>
+    </a>
+
+    <a routerLink="/peluqueros"
+       class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+      <p class="alma-eyebrow mb-4">Equipo</p>
+      <h3 class="font-serif text-xl text-alma-ink mb-2">Estilistas</h3>
+      <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Conoc&eacute; al equipo.</p>
+      <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
+        Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+      </span>
+    </a>
+
+    @if (auth.role() === 'CLIENTE') {
+      <a routerLink="/reservar"
+         class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+        <p class="alma-eyebrow mb-4">Turnos</p>
+        <h3 class="font-serif text-xl text-alma-ink mb-2">Reservar cita</h3>
+        <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Eleg&iacute; d&iacute;a y horario.</p>
+        <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
+          Reservar <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+        </span>
+      </a>
+      <a routerLink="/mis-turnos"
+         class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+        <p class="alma-eyebrow mb-4">Mi cuenta</p>
+        <h3 class="font-serif text-xl text-alma-ink mb-2">Mis citas</h3>
+        <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Confirm&aacute; o cancel&aacute; tus citas.</p>
+        <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
+          Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+        </span>
+      </a>
+    }
+
+    @if (auth.role() === 'PELUQUERO') {
+      <a routerLink="/agenda"
+         class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+        <p class="alma-eyebrow mb-4">Agenda</p>
+        <h3 class="font-serif text-xl text-alma-ink mb-2">Mi agenda</h3>
+        <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Ve&eacute; tus citas asignadas.</p>
+        <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
+          Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+        </span>
+      </a>
+    }
+  </div>
+</section>
