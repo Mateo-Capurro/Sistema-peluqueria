@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col bg-alma-bg text-alma-ink">
+<div class="min-h-screen flex flex-col bg-alma-ink text-alma-cream">
   <header class="sticky top-0 z-40 bg-alma-ink text-alma-cream border-b border-white/10">
     <div class="flex items-center justify-between gap-6 px-6 md:px-12 h-16 max-w-7xl mx-auto">
       <a routerLink="/" class="flex items-center gap-2 group">
@@ -43,8 +43,15 @@
     </div>
   </header>
 
-  <main class="flex-1 w-full max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16">
-    <router-outlet />
+  <main class="relative isolate flex-1 w-full">
+    <!-- Foto de fondo (public/salon-bg.jpg); si falla queda el bg-alma-bg -->
+    <div class="absolute inset-0 -z-20 bg-cover bg-center bg-fixed" style="background-image: url('/salon-bg.jpg')"></div>
+    <!-- Sombreado oscuro: la foto queda de fondo dramatico y el texto claro resalta -->
+    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-alma-ink/65 via-alma-ink/58 to-alma-ink/72"></div>
+
+    <div class="w-full max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16">
+      <router-outlet />
+    </div>
   </main>
 
   <footer class="bg-alma-ink text-alma-footer py-8">

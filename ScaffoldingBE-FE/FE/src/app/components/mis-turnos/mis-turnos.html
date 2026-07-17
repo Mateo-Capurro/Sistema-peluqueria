@@ -1,7 +1,7 @@
 <div class="space-y-6 max-w-3xl">
   <div>
-    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Mi cuenta</h1>
-    <p class="text-alma-body mt-1">Aqu&iacute; tienes tus citas.</p>
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">Mi cuenta</h1>
+    <p class="text-alma-cream/70 mt-1">Aqu&iacute; tienes tus citas.</p>
   </div>
 
   @if (error()) {
@@ -9,7 +9,7 @@
   }
 
   @if (loading()) {
-    <p class="text-alma-body">Cargando...</p>
+    <p class="text-alma-cream/70">Cargando...</p>
   } @else if (turnos().length === 0) {
     <div class="alma-card text-center" style="background: oklch(0.93 0.02 60);">
       <p class="text-alma-body mb-4">Todav&iacute;a no reservaste ninguna cita.</p>

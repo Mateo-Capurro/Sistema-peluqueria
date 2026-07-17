@@ -1,15 +1,15 @@
 <div class="space-y-6">
   <div>
-    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Nuestro equipo</h1>
-    <p class="text-alma-body mt-1 max-w-xl">Cada estilista de Sal&oacute;n Alma tiene su propia especialidad. Eleg&iacute; el tuyo.</p>
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">Nuestro equipo</h1>
+    <p class="text-alma-cream/70 mt-1 max-w-xl">Cada estilista de Sal&oacute;n Alma tiene su propia especialidad. Eleg&iacute; el tuyo.</p>
   </div>
 
   @if (loading()) {
-    <p class="text-alma-body">Cargando...</p>
+    <p class="text-alma-cream/70">Cargando...</p>
   } @else if (error()) {
     <div class="p-3 rounded-xl text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
   } @else if (peluqueros().length === 0) {
-    <p class="text-alma-body">No hay estilistas disponibles.</p>
+    <p class="text-alma-cream/70">No hay estilistas disponibles.</p>
   } @else {
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       @for (p of peluqueros(); track p.id) {

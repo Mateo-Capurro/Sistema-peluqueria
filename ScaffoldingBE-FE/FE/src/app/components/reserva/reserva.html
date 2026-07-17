@@ -1,8 +1,8 @@
 <div class="space-y-6 max-w-2xl">
-  <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Reservar cita</h1>
+  <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">Reservar cita</h1>
 
   @if (loadingCatalog()) {
-    <p class="text-alma-body">Cargando...</p>
+    <p class="text-alma-cream/70">Cargando...</p>
   } @else {
     <div class="alma-card space-y-4">
       <!-- Peluquero -->
@@ -61,14 +61,14 @@
     <!-- Slots -->
     @if (slots() !== null) {
       @if (slots()!.length === 0) {
-        <p class="text-alma-body">No hay horarios disponibles para esa fecha.</p>
+        <p class="text-alma-cream/70">No hay horarios disponibles para esa fecha.</p>
       } @else {
         <div>
-          <h2 class="alma-label">Horarios disponibles</h2>
+          <h2 class="block text-xs uppercase tracking-widest text-alma-cream/60 mb-2">Horarios disponibles</h2>
           <div class="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
             @for (s of slots()!; track s.inicio) {
               <button (click)="reservar(s)" [disabled]="reservando() !== null"
-                class="text-center py-3 rounded-xl border-[1.5px] border-alma-line text-alma-ink font-semibold text-sm
+                class="text-center py-3 rounded-xl border-[1.5px] border-alma-cream/30 text-alma-cream font-semibold text-sm
                        hover:border-alma-accent hover:text-alma-accent transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ reservando() === s.inicio ? '...' : hora(s.inicio) }}

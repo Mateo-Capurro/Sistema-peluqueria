@@ -1,15 +1,15 @@
 <div class="space-y-6">
   <div class="flex flex-wrap items-baseline justify-between gap-2">
-    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Servicios</h1>
-    <span class="text-[13px] text-alma-body">Precios en pesos argentinos · duraci&oacute;n estimada</span>
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">Servicios</h1>
+    <span class="text-[13px] text-alma-cream/60">Precios en pesos argentinos · duraci&oacute;n estimada</span>
   </div>
 
   @if (loading()) {
-    <p class="text-alma-body">Cargando...</p>
+    <p class="text-alma-cream/70">Cargando...</p>
   } @else if (error()) {
     <div class="p-3 rounded-xl text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
   } @else if (tratamientos().length === 0) {
-    <p class="text-alma-body">No hay servicios disponibles.</p>
+    <p class="text-alma-cream/70">No hay servicios disponibles.</p>
   } @else {
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       @for (t of tratamientos(); track t.id) {

@@ -1,14 +1,14 @@
 <div class="space-y-6 max-w-3xl">
-  <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-ink">Mi agenda</h1>
+  <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">Mi agenda</h1>
 
   @if (error()) {
     <div class="p-3 rounded-xl text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <p class="text-alma-body">Cargando...</p>
+    <p class="text-alma-cream/70">Cargando...</p>
   } @else if (turnos().length === 0) {
-    <p class="text-alma-body">No ten&eacute;s citas en tu agenda.</p>
+    <p class="text-alma-cream/70">No ten&eacute;s citas en tu agenda.</p>
   } @else {
     <div class="space-y-3">
       @for (t of turnos(); track t.id) {

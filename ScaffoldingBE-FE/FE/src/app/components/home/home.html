@@ -1,11 +1,10 @@
 <!-- ── HERO ───────────────────────────────────────────── -->
 <section id="inicio"
          class="relative -mt-10 md:-mt-16 -mx-6 md:-mx-12 min-h-[70vh] flex items-end pb-16 md:pb-24 bg-alma-ink overflow-hidden">
-  <!-- Imagen de fondo -->
+  <!-- Imagen de fondo fija: mismo plano que el backdrop del <main>, se ve continua al scrollear -->
   <div class="absolute inset-0">
-    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&h=1000&fit=crop&auto=format"
-         alt="Sal&oacute;n de peluquer&iacute;a" class="w-full h-full object-cover opacity-30" />
-    <div class="absolute inset-0 bg-gradient-to-t from-alma-ink via-alma-ink/60 to-alma-ink/20"></div>
+    <div class="absolute inset-0 bg-cover bg-center bg-fixed" style="background-image: url('/salon-bg.jpg')"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-alma-ink via-alma-ink/55 to-alma-ink/20"></div>
   </div>
 
   <!-- Línea decorativa vertical -->
@@ -35,7 +34,7 @@
   <div class="flex items-end justify-between mb-12 md:mb-16 border-b border-alma-line pb-8">
     <div>
       <p class="alma-eyebrow mb-3">Explor&aacute;</p>
-      <h2 class="font-serif font-normal text-4xl md:text-5xl text-alma-ink">Tu sal&oacute;n</h2>
+      <h2 class="font-serif font-normal text-4xl md:text-5xl text-alma-cream">Tu sal&oacute;n</h2>
     </div>
   </div>
 

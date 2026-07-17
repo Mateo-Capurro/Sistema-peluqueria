@@ -1,11 +1,17 @@
-<div class="min-h-screen flex items-center justify-center bg-alma-bg px-4 py-10">
+<div class="relative isolate min-h-screen flex items-center justify-center px-4 py-10 overflow-hidden bg-alma-ink">
+  <!-- Foto de fondo (public/salon-bg.jpg); si falla, queda el bg-alma-ink -->
+  <div class="absolute inset-0 -z-20 bg-cover bg-center"
+       style="background-image: url('/salon-bg.jpg')"></div>
+  <!-- Sombreado: oscurece la foto para resaltar la card -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-alma-ink/55 via-alma-ink/40 to-alma-ink/65"></div>
+
   <div class="w-full max-w-md">
     <div class="text-center mb-8">
-      <p class="alma-eyebrow mb-3">Belleza con car&aacute;cter</p>
-      <h1 class="font-serif font-normal text-4xl text-alma-ink">Sal&oacute;n Alma</h1>
-      <p class="text-alma-muted text-sm mt-2 font-light">Reserv&aacute; tu cita</p>
+      <p class="alma-eyebrow mb-3 text-alma-accent-light">Belleza con car&aacute;cter</p>
+      <h1 class="font-serif font-normal text-4xl text-alma-cream">Sal&oacute;n Alma</h1>
+      <p class="text-alma-cream/70 text-sm mt-2 font-light">Reserv&aacute; tu cita</p>
     </div>
-    <div class="bg-alma-card border border-alma-line p-8 md:p-10">
+    <div class="bg-alma-card border border-alma-line p-8 md:p-10 shadow-2xl">
       <router-outlet />
     </div>
   </div>
