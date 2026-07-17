@@ -38,22 +38,23 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-alma-line">
+  <div class="grid grid-cols-1 gap-4"
+       [ngClass]="auth.role() === 'PELUQUERO' ? 'sm:grid-cols-3' : 'sm:grid-cols-2'">
     <a routerLink="/tratamientos"
-       class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+       class="group bg-alma-ink/40 backdrop-blur-sm border border-alma-cream/15 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/40 transition-colors duration-300 flex flex-col">
       <p class="alma-eyebrow mb-4">Servicios</p>
-      <h3 class="font-serif text-xl text-alma-ink mb-2">Nuestros servicios</h3>
-      <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Ver los servicios disponibles.</p>
+      <h3 class="font-serif text-xl text-alma-cream mb-2">Nuestros servicios</h3>
+      <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Ver los servicios disponibles.</p>
       <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
         Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
       </span>
     </a>
 
     <a routerLink="/peluqueros"
-       class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+       class="group bg-alma-ink/40 backdrop-blur-sm border border-alma-cream/15 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/40 transition-colors duration-300 flex flex-col">
       <p class="alma-eyebrow mb-4">Equipo</p>
-      <h3 class="font-serif text-xl text-alma-ink mb-2">Estilistas</h3>
-      <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Conoc&eacute; al equipo.</p>
+      <h3 class="font-serif text-xl text-alma-cream mb-2">Estilistas</h3>
+      <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Conoc&eacute; al equipo.</p>
       <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
         Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
       </span>
@@ -61,19 +62,19 @@
 
     @if (auth.role() === 'CLIENTE') {
       <a routerLink="/reservar"
-         class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+         class="group bg-alma-ink/40 backdrop-blur-sm border border-alma-cream/15 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/40 transition-colors duration-300 flex flex-col">
         <p class="alma-eyebrow mb-4">Turnos</p>
-        <h3 class="font-serif text-xl text-alma-ink mb-2">Reservar cita</h3>
-        <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Eleg&iacute; d&iacute;a y horario.</p>
+        <h3 class="font-serif text-xl text-alma-cream mb-2">Reservar cita</h3>
+        <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Eleg&iacute; d&iacute;a y horario.</p>
         <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
           Reservar <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
         </span>
       </a>
       <a routerLink="/mis-turnos"
-         class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+         class="group bg-alma-ink/40 backdrop-blur-sm border border-alma-cream/15 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/40 transition-colors duration-300 flex flex-col">
         <p class="alma-eyebrow mb-4">Mi cuenta</p>
-        <h3 class="font-serif text-xl text-alma-ink mb-2">Mis citas</h3>
-        <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Confirm&aacute; o cancel&aacute; tus citas.</p>
+        <h3 class="font-serif text-xl text-alma-cream mb-2">Mis citas</h3>
+        <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Confirm&aacute; o cancel&aacute; tus citas.</p>
         <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
           Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
         </span>
@@ -82,10 +83,10 @@
 
     @if (auth.role() === 'PELUQUERO') {
       <a routerLink="/agenda"
-         class="group bg-alma-card p-8 md:p-10 hover:bg-alma-soft transition-colors duration-300 flex flex-col">
+         class="group bg-alma-ink/40 backdrop-blur-sm border border-alma-cream/15 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/40 transition-colors duration-300 flex flex-col">
         <p class="alma-eyebrow mb-4">Agenda</p>
-        <h3 class="font-serif text-xl text-alma-ink mb-2">Mi agenda</h3>
-        <p class="text-alma-muted text-sm leading-relaxed font-light mb-6">Ve&eacute; tus citas asignadas.</p>
+        <h3 class="font-serif text-xl text-alma-cream mb-2">Mi agenda</h3>
+        <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Ve&eacute; tus citas asignadas.</p>
         <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
           Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
         </span>
