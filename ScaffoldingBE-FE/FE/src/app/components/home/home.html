@@ -79,6 +79,15 @@
           Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
         </span>
       </a>
+      <a routerLink="/asesor"
+         class="group sm:col-span-2 bg-alma-ink/40 backdrop-blur-sm border border-alma-accent/30 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/60 transition-colors duration-300 flex flex-col">
+        <p class="alma-eyebrow mb-4">Nuevo &middot; Asesor de estilo</p>
+        <h3 class="font-serif text-xl text-alma-cream mb-2">&iquest;Qu&eacute; corte te queda mejor?</h3>
+        <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Sacate una foto y te recomendamos cortes seg&uacute;n la forma de tu rostro.</p>
+        <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
+          Probar <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+        </span>
+      </a>
     }
 
     @if (auth.role() === 'PELUQUERO') {

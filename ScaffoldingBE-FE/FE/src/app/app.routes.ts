@@ -41,6 +41,12 @@ export const routes: Routes = [
           import('./components/reserva/reserva').then(m => m.Reserva)
       },
       {
+        path: 'asesor',
+        canActivate: [roleGuard(['CLIENTE'])],
+        loadComponent: () =>
+          import('./components/asesor/asesor').then(m => m.Asesor)
+      },
+      {
         path: 'mis-turnos',
         canActivate: [roleGuard(['CLIENTE'])],
         loadComponent: () =>

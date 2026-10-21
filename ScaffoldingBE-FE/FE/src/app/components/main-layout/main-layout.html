@@ -16,6 +16,8 @@
            class="text-alma-cream/70 hover:text-alma-accent transition-colors">Estilistas</a>
 
         @if (auth.role() === 'CLIENTE') {
+          <a routerLink="/asesor" routerLinkActive="text-alma-accent"
+             class="text-alma-cream/70 hover:text-alma-accent transition-colors">Asesor</a>
           <a routerLink="/mis-turnos" routerLinkActive="text-alma-accent"
              class="text-alma-cream/70 hover:text-alma-accent transition-colors">Mi cuenta</a>
         }

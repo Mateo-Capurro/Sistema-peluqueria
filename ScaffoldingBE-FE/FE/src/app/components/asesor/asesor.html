@@ -1,0 +1,132 @@
+<div class="space-y-8">
+  <div class="flex flex-wrap items-end justify-between gap-4 border-b border-alma-cream/15 pb-6">
+    <div>
+      <p class="alma-eyebrow mb-3">Asesor de estilo</p>
+      <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">&iquest;Qu&eacute; corte te queda mejor?</h1>
+      <p class="text-alma-cream/60 text-sm mt-2 max-w-xl font-light">
+        Sacate una foto de frente y analizamos las proporciones de tu rostro.
+        La foto se procesa en tu dispositivo y no se guarda ni se env&iacute;a.
+      </p>
+    </div>
+
+    <!-- Estilo -->
+    <div class="flex border border-alma-cream/30 text-xs uppercase tracking-widest">
+      <button class="px-5 py-2.5 transition-colors"
+              [class]="estilo() === 'masculino' ? 'bg-alma-accent text-alma-ink' : 'text-alma-cream/70 hover:text-alma-accent'"
+              (click)="estilo.set('masculino')">Masculino</button>
+      <button class="px-5 py-2.5 transition-colors"
+              [class]="estilo() === 'femenino' ? 'bg-alma-accent text-alma-ink' : 'text-alma-cream/70 hover:text-alma-accent'"
+              (click)="estilo.set('femenino')">Femenino</button>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="p-3 text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
+  }
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <!-- ── Columna imagen ───────────────────────────── -->
+    <div class="alma-card !p-4 flex flex-col gap-4">
+      <div class="relative aspect-[4/3] bg-alma-ink overflow-hidden flex items-center justify-center">
+        <video #video playsinline muted
+               class="w-full h-full object-cover -scale-x-100"
+               [class.hidden]="paso() !== 'camara'"></video>
+
+        <canvas #canvas class="max-w-full max-h-full"
+                [class.hidden]="paso() !== 'resultado' && paso() !== 'analizando'"></canvas>
+
+        @if (paso() === 'camara') {
+          <!-- Óvalo guía -->
+          <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div class="w-[42%] h-[78%] rounded-[50%] border-2 border-dashed border-alma-accent/80"></div>
+          </div>
+        }
+        @if (paso() === 'inicio') {
+          <div class="text-center px-8">
+            <p class="text-alma-cream/70 text-sm font-light">
+              De frente, con buena luz, sin anteojos y con el pelo despejado de la frente.
+            </p>
+          </div>
+        }
+        @if (paso() === 'analizando') {
+          <div class="absolute inset-0 bg-alma-ink/60 flex items-center justify-center">
+            <p class="text-alma-cream text-sm uppercase tracking-widest animate-pulse">Analizando&hellip;</p>
+          </div>
+        }
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        @switch (paso()) {
+          @case ('inicio') {
+            <button class="alma-btn" (click)="abrirCamara()">Abrir c&aacute;mara</button>
+            <label class="alma-btn-outline">
+              Subir foto
+              <input type="file" accept="image/*" class="hidden" (change)="subirFoto($event)" />
+            </label>
+          }
+          @case ('camara') {
+            <button class="alma-btn" (click)="capturar()">Sacar foto</button>
+            <button class="alma-btn-outline" (click)="reiniciar()">Cancelar</button>
+          }
+          @case ('resultado') {
+            <button class="alma-btn-outline" (click)="reiniciar()">Probar otra foto</button>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- ── Columna resultado ────────────────────────── -->
+    <div class="alma-card flex flex-col gap-5">
+      @if (resultado(); as r) {
+        <div>
+          <p class="alma-eyebrow mb-2">Tu rostro es</p>
+          <h2 class="font-serif text-3xl text-alma-ink">{{ descripcion()!.titulo }}</h2>
+          <p class="text-sm text-alma-body mt-2">{{ descripcion()!.texto }}</p>
+          <p class="text-sm text-alma-muted mt-1 italic">{{ descripcion()!.objetivo }}</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 text-center border-y border-alma-line py-4">
+          <div>
+            <p class="text-lg font-semibold text-alma-ink">{{ r.medidas.ratioLargoAncho.toFixed(2) }}</p>
+            <p class="text-[11px] uppercase tracking-widest text-alma-muted">Largo / ancho</p>
+          </div>
+          <div>
+            <p class="text-lg font-semibold text-alma-ink">{{ porcentaje(r.medidas.ratioFrente) }}</p>
+            <p class="text-[11px] uppercase tracking-widest text-alma-muted">Frente</p>
+          </div>
+          <div>
+            <p class="text-lg font-semibold text-alma-ink">{{ porcentaje(r.medidas.ratioMandibula) }}</p>
+            <p class="text-[11px] uppercase tracking-widest text-alma-muted">Mand&iacute;bula</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="alma-label">Cortes recomendados</p>
+          <ul class="space-y-3">
+            @for (rec of recomendaciones(); track rec.nombre) {
+              <li class="border-l-2 border-alma-accent pl-4">
+                <p class="font-serif text-lg text-alma-ink">{{ rec.nombre }}</p>
+                <p class="text-sm text-alma-body">{{ rec.descripcion }}</p>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="mt-auto pt-2 flex flex-col gap-2">
+          <button class="alma-btn self-start" (click)="reservar()">Reservar corte &rarr;</button>
+          <p class="text-[12px] text-alma-muted">
+            Es una sugerencia orientativa. Tu estilista la ajusta seg&uacute;n tu tipo de pelo y lo que busc&aacute;s.
+          </p>
+        </div>
+      } @else {
+        <p class="alma-eyebrow">C&oacute;mo funciona</p>
+        <ol class="space-y-4 text-sm text-alma-body">
+          <li><span class="font-semibold text-alma-ink">1.</span> Detectamos 478 puntos de tu rostro con visi&oacute;n por computadora.</li>
+          <li><span class="font-semibold text-alma-ink">2.</span> Medimos largo, ancho de frente, pómulos y mandíbula.</li>
+          <li><span class="font-semibold text-alma-ink">3.</span> Con esas proporciones identificamos tu forma de rostro.</li>
+          <li><span class="font-semibold text-alma-ink">4.</span> Te sugerimos cortes que la favorecen y pod&eacute;s reservar al instante.</li>
+        </ol>
+      }
+    </div>
+  </div>
+</div>
