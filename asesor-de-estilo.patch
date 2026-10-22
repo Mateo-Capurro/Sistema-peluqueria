@@ -1,0 +1,1162 @@
+From f5d069568a19a5a00ed9e4614d3bb7a61369dfee Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 20:17:33 +0000
+Subject: [PATCH] =?UTF-8?q?Asesor=20de=20estilo:=20recomendaci=C3=B3n=20de?=
+ =?UTF-8?q?=20corte=20seg=C3=BAn=20forma=20del=20rostro?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- MediaPipe Face Landmarker en el navegador (la foto no sale del dispositivo)
+- Clasificación de rostro (ovalado, redondo, cuadrado, alargado, corazón, diamante)
+- Validación de postura (cabeza inclinada / girada)
+- Recomendaciones masculino/femenino y link directo a reservar corte
+- Ruta /asesor (CLIENTE), link en menú y card en home
+- Fix: package-lock.json tenía un 'npm' de más al inicio y rompía npm ci
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_011EBQnF8FUhEpymeNVCv9uG
+---
+ ScaffoldingBE-FE/FE/angular.json              |   5 +
+ ScaffoldingBE-FE/FE/package-lock.json         |  87 +------
+ ScaffoldingBE-FE/FE/package.json              |   1 +
+ ScaffoldingBE-FE/FE/src/app/app.routes.ts     |   6 +
+ .../FE/src/app/components/asesor/asesor.html  | 132 +++++++++++
+ .../FE/src/app/components/asesor/asesor.ts    | 199 ++++++++++++++++
+ .../FE/src/app/components/home/home.html      |   9 +
+ .../components/main-layout/main-layout.html   |   2 +
+ .../FE/src/app/shared/models/rostro.model.ts  |  44 ++++
+ .../services/face-landmarker.service.ts       |  47 ++++
+ .../app/shared/utils/analisis-rostro.spec.ts  |  78 +++++++
+ .../src/app/shared/utils/analisis-rostro.ts   | 215 ++++++++++++++++++
+ 12 files changed, 746 insertions(+), 79 deletions(-)
+ create mode 100644 ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.html
+ create mode 100644 ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.ts
+ create mode 100644 ScaffoldingBE-FE/FE/src/app/shared/models/rostro.model.ts
+ create mode 100644 ScaffoldingBE-FE/FE/src/app/shared/services/face-landmarker.service.ts
+ create mode 100644 ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.spec.ts
+ create mode 100644 ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.ts
+
+diff --git a/ScaffoldingBE-FE/FE/angular.json b/ScaffoldingBE-FE/FE/angular.json
+index 5fc6387..874ddc0 100644
+--- a/ScaffoldingBE-FE/FE/angular.json
++++ b/ScaffoldingBE-FE/FE/angular.json
+@@ -23,6 +23,11 @@
+               {
+                 "glob": "**/*",
+                 "input": "public"
++              },
++              {
++                "glob": "**/*",
++                "input": "node_modules/@mediapipe/tasks-vision/wasm",
++                "output": "mediapipe/wasm"
+               }
+             ],
+             "styles": [
+diff --git a/ScaffoldingBE-FE/FE/package-lock.json b/ScaffoldingBE-FE/FE/package-lock.json
+index a678ed4..d047e4b 100644
+--- a/ScaffoldingBE-FE/FE/package-lock.json
++++ b/ScaffoldingBE-FE/FE/package-lock.json
+@@ -1,4 +1,4 @@
+-npm{
++{
+   "name": "fe",
+   "version": "0.0.0",
+   "lockfileVersion": 3,
+@@ -14,6 +14,7 @@ npm{
+         "@angular/forms": "^22.0.0",
+         "@angular/platform-browser": "^22.0.0",
+         "@angular/router": "^22.0.0",
++        "@mediapipe/tasks-vision": "^0.10.21",
+         "rxjs": "~7.8.0",
+         "tslib": "^2.3.0"
+       },
+@@ -2234,6 +2235,12 @@ npm{
+         "win32"
+       ]
+     },
++    "node_modules/@mediapipe/tasks-vision": {
++      "version": "0.10.21",
++      "resolved": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
++      "integrity": "sha512-TuhKH+credq4zLksGbYrnvJ1aLIWMc5r0UHwzxzql4BHECJwIAoBR61ZrqwGOW6ZmSBIzU1t4VtKj8hbxFaKeA==",
++      "license": "Apache-2.0"
++    },
+     "node_modules/@modelcontextprotocol/sdk": {
+       "version": "1.29.0",
+       "resolved": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.29.0.tgz",
+@@ -2503,9 +2510,6 @@ npm{
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2523,9 +2527,6 @@ npm{
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2543,9 +2544,6 @@ npm{
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2563,9 +2561,6 @@ npm{
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2583,9 +2578,6 @@ npm{
+         "s390x"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2603,9 +2595,6 @@ npm{
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2623,9 +2612,6 @@ npm{
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3102,9 +3088,6 @@ npm{
+         "arm"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3126,9 +3109,6 @@ npm{
+         "arm"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3150,9 +3130,6 @@ npm{
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3174,9 +3151,6 @@ npm{
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3198,9 +3172,6 @@ npm{
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3222,9 +3193,6 @@ npm{
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3401,9 +3369,6 @@ npm{
+         "arm"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3418,9 +3383,6 @@ npm{
+         "arm"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3435,9 +3397,6 @@ npm{
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3452,9 +3411,6 @@ npm{
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3469,9 +3425,6 @@ npm{
+         "loong64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3486,9 +3439,6 @@ npm{
+         "loong64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3503,9 +3453,6 @@ npm{
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3520,9 +3467,6 @@ npm{
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3537,9 +3481,6 @@ npm{
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3554,9 +3495,6 @@ npm{
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3571,9 +3509,6 @@ npm{
+         "s390x"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3588,9 +3523,6 @@ npm{
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3605,9 +3537,6 @@ npm{
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+diff --git a/ScaffoldingBE-FE/FE/package.json b/ScaffoldingBE-FE/FE/package.json
+index 14e549b..84cb234 100644
+--- a/ScaffoldingBE-FE/FE/package.json
++++ b/ScaffoldingBE-FE/FE/package.json
+@@ -17,6 +17,7 @@
+     "@angular/forms": "^22.0.0",
+     "@angular/platform-browser": "^22.0.0",
+     "@angular/router": "^22.0.0",
++    "@mediapipe/tasks-vision": "^0.10.21",
+     "rxjs": "~7.8.0",
+     "tslib": "^2.3.0"
+   },
+diff --git a/ScaffoldingBE-FE/FE/src/app/app.routes.ts b/ScaffoldingBE-FE/FE/src/app/app.routes.ts
+index 5b8374b..efaa547 100644
+--- a/ScaffoldingBE-FE/FE/src/app/app.routes.ts
++++ b/ScaffoldingBE-FE/FE/src/app/app.routes.ts
+@@ -40,6 +40,12 @@ export const routes: Routes = [
+         loadComponent: () =>
+           import('./components/reserva/reserva').then(m => m.Reserva)
+       },
++      {
++        path: 'asesor',
++        canActivate: [roleGuard(['CLIENTE'])],
++        loadComponent: () =>
++          import('./components/asesor/asesor').then(m => m.Asesor)
++      },
+       {
+         path: 'mis-turnos',
+         canActivate: [roleGuard(['CLIENTE'])],
+diff --git a/ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.html b/ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.html
+new file mode 100644
+index 0000000..936b9d7
+--- /dev/null
++++ b/ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.html
+@@ -0,0 +1,132 @@
++<div class="space-y-8">
++  <div class="flex flex-wrap items-end justify-between gap-4 border-b border-alma-cream/15 pb-6">
++    <div>
++      <p class="alma-eyebrow mb-3">Asesor de estilo</p>
++      <h1 class="font-serif text-3xl md:text-4xl font-semibold text-alma-cream">&iquest;Qu&eacute; corte te queda mejor?</h1>
++      <p class="text-alma-cream/60 text-sm mt-2 max-w-xl font-light">
++        Sacate una foto de frente y analizamos las proporciones de tu rostro.
++        La foto se procesa en tu dispositivo y no se guarda ni se env&iacute;a.
++      </p>
++    </div>
++
++    <!-- Estilo -->
++    <div class="flex border border-alma-cream/30 text-xs uppercase tracking-widest">
++      <button class="px-5 py-2.5 transition-colors"
++              [class]="estilo() === 'masculino' ? 'bg-alma-accent text-alma-ink' : 'text-alma-cream/70 hover:text-alma-accent'"
++              (click)="estilo.set('masculino')">Masculino</button>
++      <button class="px-5 py-2.5 transition-colors"
++              [class]="estilo() === 'femenino' ? 'bg-alma-accent text-alma-ink' : 'text-alma-cream/70 hover:text-alma-accent'"
++              (click)="estilo.set('femenino')">Femenino</button>
++    </div>
++  </div>
++
++  @if (error()) {
++    <div class="p-3 text-sm" style="background: oklch(0.93 0.05 40); color: oklch(0.55 0.14 30);">{{ error() }}</div>
++  }
++
++  <div class="grid gap-6 lg:grid-cols-2">
++    <!-- ── Columna imagen ───────────────────────────── -->
++    <div class="alma-card !p-4 flex flex-col gap-4">
++      <div class="relative aspect-[4/3] bg-alma-ink overflow-hidden flex items-center justify-center">
++        <video #video playsinline muted
++               class="w-full h-full object-cover -scale-x-100"
++               [class.hidden]="paso() !== 'camara'"></video>
++
++        <canvas #canvas class="max-w-full max-h-full"
++                [class.hidden]="paso() !== 'resultado' && paso() !== 'analizando'"></canvas>
++
++        @if (paso() === 'camara') {
++          <!-- Óvalo guía -->
++          <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
++            <div class="w-[42%] h-[78%] rounded-[50%] border-2 border-dashed border-alma-accent/80"></div>
++          </div>
++        }
++        @if (paso() === 'inicio') {
++          <div class="text-center px-8">
++            <p class="text-alma-cream/70 text-sm font-light">
++              De frente, con buena luz, sin anteojos y con el pelo despejado de la frente.
++            </p>
++          </div>
++        }
++        @if (paso() === 'analizando') {
++          <div class="absolute inset-0 bg-alma-ink/60 flex items-center justify-center">
++            <p class="text-alma-cream text-sm uppercase tracking-widest animate-pulse">Analizando&hellip;</p>
++          </div>
++        }
++      </div>
++
++      <div class="flex flex-wrap gap-3">
++        @switch (paso()) {
++          @case ('inicio') {
++            <button class="alma-btn" (click)="abrirCamara()">Abrir c&aacute;mara</button>
++            <label class="alma-btn-outline">
++              Subir foto
++              <input type="file" accept="image/*" class="hidden" (change)="subirFoto($event)" />
++            </label>
++          }
++          @case ('camara') {
++            <button class="alma-btn" (click)="capturar()">Sacar foto</button>
++            <button class="alma-btn-outline" (click)="reiniciar()">Cancelar</button>
++          }
++          @case ('resultado') {
++            <button class="alma-btn-outline" (click)="reiniciar()">Probar otra foto</button>
++          }
++        }
++      </div>
++    </div>
++
++    <!-- ── Columna resultado ────────────────────────── -->
++    <div class="alma-card flex flex-col gap-5">
++      @if (resultado(); as r) {
++        <div>
++          <p class="alma-eyebrow mb-2">Tu rostro es</p>
++          <h2 class="font-serif text-3xl text-alma-ink">{{ descripcion()!.titulo }}</h2>
++          <p class="text-sm text-alma-body mt-2">{{ descripcion()!.texto }}</p>
++          <p class="text-sm text-alma-muted mt-1 italic">{{ descripcion()!.objetivo }}</p>
++        </div>
++
++        <div class="grid grid-cols-3 gap-3 text-center border-y border-alma-line py-4">
++          <div>
++            <p class="text-lg font-semibold text-alma-ink">{{ r.medidas.ratioLargoAncho.toFixed(2) }}</p>
++            <p class="text-[11px] uppercase tracking-widest text-alma-muted">Largo / ancho</p>
++          </div>
++          <div>
++            <p class="text-lg font-semibold text-alma-ink">{{ porcentaje(r.medidas.ratioFrente) }}</p>
++            <p class="text-[11px] uppercase tracking-widest text-alma-muted">Frente</p>
++          </div>
++          <div>
++            <p class="text-lg font-semibold text-alma-ink">{{ porcentaje(r.medidas.ratioMandibula) }}</p>
++            <p class="text-[11px] uppercase tracking-widest text-alma-muted">Mand&iacute;bula</p>
++          </div>
++        </div>
++
++        <div>
++          <p class="alma-label">Cortes recomendados</p>
++          <ul class="space-y-3">
++            @for (rec of recomendaciones(); track rec.nombre) {
++              <li class="border-l-2 border-alma-accent pl-4">
++                <p class="font-serif text-lg text-alma-ink">{{ rec.nombre }}</p>
++                <p class="text-sm text-alma-body">{{ rec.descripcion }}</p>
++              </li>
++            }
++          </ul>
++        </div>
++
++        <div class="mt-auto pt-2 flex flex-col gap-2">
++          <button class="alma-btn self-start" (click)="reservar()">Reservar corte &rarr;</button>
++          <p class="text-[12px] text-alma-muted">
++            Es una sugerencia orientativa. Tu estilista la ajusta seg&uacute;n tu tipo de pelo y lo que busc&aacute;s.
++          </p>
++        </div>
++      } @else {
++        <p class="alma-eyebrow">C&oacute;mo funciona</p>
++        <ol class="space-y-4 text-sm text-alma-body">
++          <li><span class="font-semibold text-alma-ink">1.</span> Detectamos 478 puntos de tu rostro con visi&oacute;n por computadora.</li>
++          <li><span class="font-semibold text-alma-ink">2.</span> Medimos largo, ancho de frente, pómulos y mandíbula.</li>
++          <li><span class="font-semibold text-alma-ink">3.</span> Con esas proporciones identificamos tu forma de rostro.</li>
++          <li><span class="font-semibold text-alma-ink">4.</span> Te sugerimos cortes que la favorecen y pod&eacute;s reservar al instante.</li>
++        </ol>
++      }
++    </div>
++  </div>
++</div>
+diff --git a/ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.ts b/ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.ts
+new file mode 100644
+index 0000000..83e0e44
+--- /dev/null
++++ b/ScaffoldingBE-FE/FE/src/app/components/asesor/asesor.ts
+@@ -0,0 +1,199 @@
++import { Component, ElementRef, OnDestroy, OnInit, computed, inject, signal, viewChild } from '@angular/core';
++import { Router } from '@angular/router';
++import { FaceLandmarkerService } from '../../shared/services/face-landmarker.service';
++import { TratamientoService } from '../../shared/services/tratamiento.service';
++import { Tratamiento } from '../../shared/models/tratamiento.model';
++import { EstiloCorte, PuntoFacial, ResultadoAnalisis } from '../../shared/models/rostro.model';
++import { DESCRIPCION_FORMA, LM, RECOMENDACIONES, analizarRostro } from '../../shared/utils/analisis-rostro';
++
++type Paso = 'inicio' | 'camara' | 'analizando' | 'resultado';
++
++const MAX_LADO = 1024;
++
++@Component({
++  selector: 'app-asesor',
++  imports: [],
++  templateUrl: './asesor.html'
++})
++export class Asesor implements OnInit, OnDestroy {
++  private faceService = inject(FaceLandmarkerService);
++  private tratamientoService = inject(TratamientoService);
++  private router = inject(Router);
++
++  private video = viewChild<ElementRef<HTMLVideoElement>>('video');
++  private canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
++
++  paso = signal<Paso>('inicio');
++  estilo = signal<EstiloCorte>('masculino');
++  error = signal<string | null>(null);
++  resultado = signal<ResultadoAnalisis | null>(null);
++  tratamientos = signal<Tratamiento[]>([]);
++
++  private stream: MediaStream | null = null;
++
++  descripcion = computed(() => {
++    const r = this.resultado();
++    return r ? DESCRIPCION_FORMA[r.forma] : null;
++  });
++
++  recomendaciones = computed(() => {
++    const r = this.resultado();
++    return r ? RECOMENDACIONES[r.forma][this.estilo()] : [];
++  });
++
++  /** Tratamiento "Corte..." del catálogo para ofrecer reservar directo. */
++  tratamientoCorte = computed(() =>
++    this.tratamientos().find((t) => t.nombre.toLowerCase().includes('corte')) ?? null
++  );
++
++  ngOnInit(): void {
++    this.faceService.precargar();
++    this.tratamientoService.list().subscribe({
++      next: (t) => this.tratamientos.set(t),
++      error: () => void 0
++    });
++  }
++
++  ngOnDestroy(): void {
++    this.detenerCamara();
++  }
++
++  // ── Cámara ─────────────────────────────────────────────
++  async abrirCamara(): Promise<void> {
++    this.error.set(null);
++    try {
++      this.stream = await navigator.mediaDevices.getUserMedia({
++        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
++        audio: false
++      });
++      this.paso.set('camara');
++      // el <video> siempre está en el DOM, solo se oculta
++      const v = this.video()!.nativeElement;
++      v.srcObject = this.stream;
++      await v.play();
++    } catch {
++      this.error.set('No pudimos acceder a la cámara. Revisá los permisos o subí una foto.');
++      this.paso.set('inicio');
++    }
++  }
++
++  detenerCamara(): void {
++    this.stream?.getTracks().forEach((t) => t.stop());
++    this.stream = null;
++  }
++
++  capturar(): void {
++    const v = this.video()!.nativeElement;
++    const c = this.canvas().nativeElement;
++    const escala = Math.min(1, MAX_LADO / Math.max(v.videoWidth, v.videoHeight));
++    c.width = Math.round(v.videoWidth * escala);
++    c.height = Math.round(v.videoHeight * escala);
++    const ctx = c.getContext('2d')!;
++    // espejo, igual que lo que el usuario ve en la vista previa
++    ctx.save();
++    ctx.translate(c.width, 0);
++    ctx.scale(-1, 1);
++    ctx.drawImage(v, 0, 0, c.width, c.height);
++    ctx.restore();
++    this.detenerCamara();
++    this.analizar();
++  }
++
++  // ── Subir archivo ──────────────────────────────────────
++  subirFoto(ev: Event): void {
++    const input = ev.target as HTMLInputElement;
++    const file = input.files?.[0];
++    input.value = '';
++    if (!file) return;
++    this.error.set(null);
++
++    const url = URL.createObjectURL(file);
++    const img = new Image();
++    img.onload = () => {
++      const c = this.canvas().nativeElement;
++      const escala = Math.min(1, MAX_LADO / Math.max(img.width, img.height));
++      c.width = Math.round(img.width * escala);
++      c.height = Math.round(img.height * escala);
++      c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
++      URL.revokeObjectURL(url);
++      this.analizar();
++    };
++    img.onerror = () => {
++      URL.revokeObjectURL(url);
++      this.error.set('No se pudo leer la imagen.');
++    };
++    img.src = url;
++  }
++
++  // ── Análisis ───────────────────────────────────────────
++  private async analizar(): Promise<void> {
++    this.paso.set('analizando');
++    const c = this.canvas().nativeElement;
++    try {
++      const caras = await this.faceService.detectar(c);
++      if (caras.length === 0) {
++        return this.fallar('No detectamos ninguna cara. Probá con más luz y de frente.');
++      }
++      if (caras.length > 1) {
++        return this.fallar('Hay más de una persona en la foto. Sacala solo/a.');
++      }
++      const r = analizarRostro(caras[0], c.width, c.height);
++      if (!r.postura.ok) {
++        return this.fallar(r.postura.motivo!);
++      }
++      this.dibujarGuias(caras[0]);
++      this.resultado.set(r);
++      this.paso.set('resultado');
++    } catch {
++      this.fallar('No se pudo cargar el analizador. Verificá tu conexión e intentá de nuevo.');
++    }
++  }
++
++  private fallar(msg: string): void {
++    this.error.set(msg);
++    this.resultado.set(null);
++    this.paso.set('inicio');
++  }
++
++  /** Dibuja sobre la foto las líneas que se midieron. */
++  private dibujarGuias(p: PuntoFacial[]): void {
++    const c = this.canvas().nativeElement;
++    const ctx = c.getContext('2d')!;
++    const W = c.width, H = c.height;
++    ctx.lineWidth = Math.max(2, W / 300);
++    ctx.strokeStyle = '#C9A96E';
++    ctx.fillStyle = '#C9A96E';
++
++    const linea = (a: number, b: number) => {
++      ctx.beginPath();
++      ctx.moveTo(p[a].x * W, p[a].y * H);
++      ctx.lineTo(p[b].x * W, p[b].y * H);
++      ctx.stroke();
++      for (const i of [a, b]) {
++        ctx.beginPath();
++        ctx.arc(p[i].x * W, p[i].y * H, ctx.lineWidth * 1.8, 0, Math.PI * 2);
++        ctx.fill();
++      }
++    };
++    linea(LM.frenteSuperior, LM.menton);
++    linea(LM.frenteIzq, LM.frenteDer);
++    linea(LM.pomuloIzq, LM.pomuloDer);
++    linea(LM.mandibulaIzq, LM.mandibulaDer);
++  }
++
++  porcentaje(v: number): string {
++    return Math.round(v * 100) + '%';
++  }
++
++  reiniciar(): void {
++    this.detenerCamara();
++    this.resultado.set(null);
++    this.error.set(null);
++    this.paso.set('inicio');
++  }
++
++  reservar(): void {
++    const t = this.tratamientoCorte();
++    this.router.navigate(['/reservar'], t ? { queryParams: { tratamiento: t.id } } : {});
++  }
++}
+diff --git a/ScaffoldingBE-FE/FE/src/app/components/home/home.html b/ScaffoldingBE-FE/FE/src/app/components/home/home.html
+index f148e7d..7e659be 100644
+--- a/ScaffoldingBE-FE/FE/src/app/components/home/home.html
++++ b/ScaffoldingBE-FE/FE/src/app/components/home/home.html
+@@ -79,6 +79,15 @@
+           Ver <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+         </span>
+       </a>
++      <a routerLink="/asesor"
++         class="group sm:col-span-2 bg-alma-ink/40 backdrop-blur-sm border border-alma-accent/30 p-8 md:p-10 hover:bg-alma-ink/60 hover:border-alma-accent/60 transition-colors duration-300 flex flex-col">
++        <p class="alma-eyebrow mb-4">Nuevo &middot; Asesor de estilo</p>
++        <h3 class="font-serif text-xl text-alma-cream mb-2">&iquest;Qu&eacute; corte te queda mejor?</h3>
++        <p class="text-alma-cream/60 text-sm leading-relaxed font-light mb-6">Sacate una foto y te recomendamos cortes seg&uacute;n la forma de tu rostro.</p>
++        <span class="mt-auto inline-flex items-center gap-2 text-alma-accent text-xs uppercase tracking-widest">
++          Probar <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
++        </span>
++      </a>
+     }
+ 
+     @if (auth.role() === 'PELUQUERO') {
+diff --git a/ScaffoldingBE-FE/FE/src/app/components/main-layout/main-layout.html b/ScaffoldingBE-FE/FE/src/app/components/main-layout/main-layout.html
+index cd1dafc..1cc4352 100644
+--- a/ScaffoldingBE-FE/FE/src/app/components/main-layout/main-layout.html
++++ b/ScaffoldingBE-FE/FE/src/app/components/main-layout/main-layout.html
+@@ -16,6 +16,8 @@
+            class="text-alma-cream/70 hover:text-alma-accent transition-colors">Estilistas</a>
+ 
+         @if (auth.role() === 'CLIENTE') {
++          <a routerLink="/asesor" routerLinkActive="text-alma-accent"
++             class="text-alma-cream/70 hover:text-alma-accent transition-colors">Asesor</a>
+           <a routerLink="/mis-turnos" routerLinkActive="text-alma-accent"
+              class="text-alma-cream/70 hover:text-alma-accent transition-colors">Mi cuenta</a>
+         }
+diff --git a/ScaffoldingBE-FE/FE/src/app/shared/models/rostro.model.ts b/ScaffoldingBE-FE/FE/src/app/shared/models/rostro.model.ts
+new file mode 100644
+index 0000000..b83d6ac
+--- /dev/null
++++ b/ScaffoldingBE-FE/FE/src/app/shared/models/rostro.model.ts
+@@ -0,0 +1,44 @@
++export type FormaRostro = 'ovalada' | 'redonda' | 'cuadrada' | 'alargada' | 'corazon' | 'diamante';
++
++export type EstiloCorte = 'masculino' | 'femenino';
++
++/** Punto de landmark normalizado (0..1) como lo devuelve MediaPipe. */
++export interface PuntoFacial {
++  x: number;
++  y: number;
++  z?: number;
++}
++
++/** Medidas en píxeles reales de la imagen. */
++export interface MedidasRostro {
++  largo: number;
++  anchoFrente: number;
++  anchoPomulos: number;
++  anchoMandibula: number;
++  /** largo / anchoPomulos */
++  ratioLargoAncho: number;
++  /** anchoFrente / anchoPomulos */
++  ratioFrente: number;
++  /** anchoMandibula / anchoPomulos */
++  ratioMandibula: number;
++}
++
++export interface Postura {
++  /** Inclinación lateral de la cabeza en grados. */
++  rollGrados: number;
++  /** Asimetría izquierda/derecha (0 = de frente). */
++  giro: number;
++  ok: boolean;
++  motivo?: string;
++}
++
++export interface Recomendacion {
++  nombre: string;
++  descripcion: string;
++}
++
++export interface ResultadoAnalisis {
++  forma: FormaRostro;
++  medidas: MedidasRostro;
++  postura: Postura;
++}
+diff --git a/ScaffoldingBE-FE/FE/src/app/shared/services/face-landmarker.service.ts b/ScaffoldingBE-FE/FE/src/app/shared/services/face-landmarker.service.ts
+new file mode 100644
+index 0000000..e499b5e
+--- /dev/null
++++ b/ScaffoldingBE-FE/FE/src/app/shared/services/face-landmarker.service.ts
+@@ -0,0 +1,47 @@
++import { Injectable } from '@angular/core';
++import type { FaceLandmarker } from '@mediapipe/tasks-vision';
++import { PuntoFacial } from '../models/rostro.model';
++
++// Los .wasm se copian desde node_modules en el build (ver angular.json → assets)
++const WASM_URL = '/mediapipe/wasm';
++const MODEL_URL =
++  'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
++
++/**
++ * Envuelve MediaPipe Face Landmarker. Se carga de forma diferida (la primera vez
++ * que se usa) para no sumar peso al bundle inicial. Todo corre en el navegador:
++ * la foto del cliente nunca se envía al backend.
++ */
++@Injectable({ providedIn: 'root' })
++export class FaceLandmarkerService {
++  private landmarker: Promise<FaceLandmarker> | null = null;
++
++  private cargar(): Promise<FaceLandmarker> {
++    if (!this.landmarker) {
++      this.landmarker = (async () => {
++        const { FaceLandmarker, FilesetResolver } = await import('@mediapipe/tasks-vision');
++        const vision = await FilesetResolver.forVisionTasks(WASM_URL);
++        return FaceLandmarker.createFromOptions(vision, {
++          baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU' },
++          runningMode: 'IMAGE',
++          numFaces: 2 // pedimos 2 para poder avisar si hay más de una cara
++        });
++      })().catch((e) => {
++        this.landmarker = null; // permitir reintento
++        throw e;
++      });
++    }
++    return this.landmarker;
++  }
++
++  /** Precarga el modelo (opcional, para que el análisis sea instantáneo). */
++  precargar(): void {
++    this.cargar().catch(() => void 0);
++  }
++
++  /** Devuelve los landmarks de cada cara detectada en la imagen. */
++  async detectar(img: HTMLCanvasElement | HTMLImageElement): Promise<PuntoFacial[][]> {
++    const lm = await this.cargar();
++    return lm.detect(img).faceLandmarks;
++  }
++}
+diff --git a/ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.spec.ts b/ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.spec.ts
+new file mode 100644
+index 0000000..0ab339b
+--- /dev/null
++++ b/ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.spec.ts
+@@ -0,0 +1,78 @@
++import { describe, expect, it } from 'vitest';
++import { MedidasRostro, PuntoFacial } from '../models/rostro.model';
++import { LM, RECOMENDACIONES, calcularMedidas, clasificarForma, evaluarPostura } from './analisis-rostro';
++
++function medidas(r: number, f: number, j: number): MedidasRostro {
++  return { largo: r, anchoFrente: f, anchoPomulos: 1, anchoMandibula: j,
++           ratioLargoAncho: r, ratioFrente: f, ratioMandibula: j };
++}
++
++/** Malla falsa con los puntos relevantes ubicados a mano (coords normalizadas). */
++function malla(cfg: { largo: number; frente: number; pomulos: number; mandibula: number; inclinacion?: number }) {
++  const p: PuntoFacial[] = Array.from({ length: 478 }, () => ({ x: 0.5, y: 0.5 }));
++  const cx = 0.5;
++  p[LM.frenteSuperior] = { x: cx, y: 0.5 - cfg.largo / 2 };
++  p[LM.menton] = { x: cx, y: 0.5 + cfg.largo / 2 };
++  p[LM.frenteIzq] = { x: cx - cfg.frente / 2, y: 0.3 };
++  p[LM.frenteDer] = { x: cx + cfg.frente / 2, y: 0.3 };
++  p[LM.pomuloIzq] = { x: cx - cfg.pomulos / 2, y: 0.5 };
++  p[LM.pomuloDer] = { x: cx + cfg.pomulos / 2, y: 0.5 };
++  p[LM.mandibulaIzq] = { x: cx - cfg.mandibula / 2, y: 0.7 };
++  p[LM.mandibulaDer] = { x: cx + cfg.mandibula / 2, y: 0.7 };
++  p[LM.ojoExtIzq] = { x: 0.4, y: 0.42 };
++  p[LM.ojoExtDer] = { x: 0.6, y: 0.42 + (cfg.inclinacion ?? 0) };
++  p[LM.punta_nariz] = { x: cx, y: 0.55 };
++  return p;
++}
++
++describe('clasificarForma', () => {
++  it.each([
++    [medidas(1.55, 0.85, 0.80), 'alargada'],
++    [medidas(1.10, 0.95, 0.70), 'redonda'], // corta: no debe caer en corazón
++    [medidas(1.15, 0.85, 0.75), 'redonda'],
++    [medidas(1.15, 0.90, 0.90), 'cuadrada'],
++    [medidas(1.30, 0.95, 0.70), 'corazon'],
++    [medidas(1.30, 0.72, 0.68), 'diamante'],
++    [medidas(1.30, 0.86, 0.80), 'ovalada']
++  ])('caso %# → %s', (m, esperado) => {
++    expect(clasificarForma(m)).toBe(esperado);
++  });
++});
++
++describe('calcularMedidas', () => {
++  it('corrige imágenes no cuadradas usando ancho/alto en píxeles', () => {
++    const p = malla({ largo: 0.4, frente: 0.3, pomulos: 0.3, mandibula: 0.25 });
++    // imagen 4:3 → el ancho normalizado vale más píxeles que el alto
++    const m = calcularMedidas(p, 800, 600);
++    expect(m.largo).toBeCloseTo(240);
++    expect(m.anchoPomulos).toBeCloseTo(240);
++    expect(m.ratioLargoAncho).toBeCloseTo(1);
++  });
++});
++
++describe('evaluarPostura', () => {
++  it('acepta una cara derecha y de frente', () => {
++    const p = malla({ largo: 0.4, frente: 0.3, pomulos: 0.3, mandibula: 0.25 });
++    expect(evaluarPostura(p, 1000, 1000).ok).toBe(true);
++  });
++
++  it('rechaza la cabeza inclinada', () => {
++    const p = malla({ largo: 0.4, frente: 0.3, pomulos: 0.3, mandibula: 0.25, inclinacion: 0.08 });
++    expect(evaluarPostura(p, 1000, 1000).ok).toBe(false);
++  });
++
++  it('rechaza la cara girada', () => {
++    const p = malla({ largo: 0.4, frente: 0.3, pomulos: 0.3, mandibula: 0.25 });
++    p[LM.punta_nariz] = { x: 0.6, y: 0.55 };
++    expect(evaluarPostura(p, 1000, 1000).ok).toBe(false);
++  });
++});
++
++describe('RECOMENDACIONES', () => {
++  it('tiene sugerencias para cada forma y estilo', () => {
++    for (const forma of Object.values(RECOMENDACIONES)) {
++      expect(forma.masculino.length).toBeGreaterThan(0);
++      expect(forma.femenino.length).toBeGreaterThan(0);
++    }
++  });
++});
+diff --git a/ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.ts b/ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.ts
+new file mode 100644
+index 0000000..2e1b0f6
+--- /dev/null
++++ b/ScaffoldingBE-FE/FE/src/app/shared/utils/analisis-rostro.ts
+@@ -0,0 +1,215 @@
++import {
++  EstiloCorte,
++  FormaRostro,
++  MedidasRostro,
++  PuntoFacial,
++  Postura,
++  Recomendacion,
++  ResultadoAnalisis
++} from '../models/rostro.model';
++
++/**
++ * Índices de la malla de 478 puntos de MediaPipe Face Landmarker.
++ * Referencia: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker
++ */
++export const LM = {
++  frenteSuperior: 10,   // parte alta de la frente (NO es la línea del pelo)
++  menton: 152,
++  pomuloIzq: 234,
++  pomuloDer: 454,
++  frenteIzq: 54,
++  frenteDer: 284,
++  mandibulaIzq: 172,
++  mandibulaDer: 397,
++  ojoExtIzq: 33,
++  ojoExtDer: 263,
++  punta_nariz: 1
++} as const;
++
++/**
++ * Umbrales de clasificación. Son un punto de partida: conviene calibrarlos
++ * con fotos reales de clientes (ver README del módulo).
++ */
++export const UMBRALES = {
++  alargada: 1.42,        // largo/ancho por encima → cara alargada
++  corta: 1.22,           // largo/ancho por debajo → redonda o cuadrada
++  mandibulaCuadrada: 0.82, // mandíbula casi tan ancha como pómulos
++  frenteCorazon: 0.12,   // frente más ancha que mandíbula por este margen (relativo a pómulos)
++  diamante: 0.80,        // frente y mandíbula angostas respecto a pómulos
++  rollMax: 10,           // grados
++  giroMax: 0.18
++} as const;
++
++const dist = (a: PuntoFacial, b: PuntoFacial, w: number, h: number) =>
++  Math.hypot((a.x - b.x) * w, (a.y - b.y) * h);
++
++/** Calcula medidas en píxeles (corrige la deformación de imágenes no cuadradas). */
++export function calcularMedidas(p: PuntoFacial[], ancho: number, alto: number): MedidasRostro {
++  const largo = dist(p[LM.frenteSuperior], p[LM.menton], ancho, alto);
++  const anchoPomulos = dist(p[LM.pomuloIzq], p[LM.pomuloDer], ancho, alto);
++  const anchoFrente = dist(p[LM.frenteIzq], p[LM.frenteDer], ancho, alto);
++  const anchoMandibula = dist(p[LM.mandibulaIzq], p[LM.mandibulaDer], ancho, alto);
++  return {
++    largo,
++    anchoFrente,
++    anchoPomulos,
++    anchoMandibula,
++    ratioLargoAncho: largo / anchoPomulos,
++    ratioFrente: anchoFrente / anchoPomulos,
++    ratioMandibula: anchoMandibula / anchoPomulos
++  };
++}
++
++/** Verifica que la cara esté de frente y derecha; si no, las medidas no sirven. */
++export function evaluarPostura(p: PuntoFacial[], ancho: number, alto: number): Postura {
++  const oi = p[LM.ojoExtIzq];
++  const od = p[LM.ojoExtDer];
++  const rollGrados = Math.abs(
++    (Math.atan2((od.y - oi.y) * alto, (od.x - oi.x) * ancho) * 180) / Math.PI
++  );
++
++  const nariz = p[LM.punta_nariz];
++  const izq = Math.abs(nariz.x - p[LM.pomuloIzq].x);
++  const der = Math.abs(p[LM.pomuloDer].x - nariz.x);
++  const giro = Math.abs(izq - der) / (izq + der);
++
++  if (rollGrados > UMBRALES.rollMax) {
++    return { rollGrados, giro, ok: false, motivo: 'Tenés la cabeza inclinada. Mantenela derecha.' };
++  }
++  if (giro > UMBRALES.giroMax) {
++    return { rollGrados, giro, ok: false, motivo: 'Estás girando la cara. Mirá directo a la cámara.' };
++  }
++  return { rollGrados, giro, ok: true };
++}
++
++/** Reglas de clasificación de forma de rostro a partir de las proporciones. */
++export function clasificarForma(m: MedidasRostro): FormaRostro {
++  const { ratioLargoAncho: r, ratioFrente: f, ratioMandibula: j } = m;
++
++  // 1) La proporción largo/ancho es la señal más fuerte → se evalúa primero.
++  if (r >= UMBRALES.alargada) return 'alargada';
++  if (r < UMBRALES.corta) {
++    return j >= UMBRALES.mandibulaCuadrada ? 'cuadrada' : 'redonda';
++  }
++  // 2) Largo intermedio: decide la relación frente / pómulos / mandíbula.
++  if (f < UMBRALES.diamante && j < UMBRALES.diamante - 0.05) return 'diamante';
++  if (f - j > UMBRALES.frenteCorazon && j < UMBRALES.mandibulaCuadrada) return 'corazon';
++  return 'ovalada';
++}
++
++export function analizarRostro(p: PuntoFacial[], ancho: number, alto: number): ResultadoAnalisis {
++  const medidas = calcularMedidas(p, ancho, alto);
++  return {
++    medidas,
++    postura: evaluarPostura(p, ancho, alto),
++    forma: clasificarForma(medidas)
++  };
++}
++
++export const DESCRIPCION_FORMA: Record<FormaRostro, { titulo: string; texto: string; objetivo: string }> = {
++  ovalada: {
++    titulo: 'Ovalado',
++    texto: 'Proporciones equilibradas, frente y mandíbula similares y mentón suave.',
++    objetivo: 'Casi cualquier corte te queda bien. Podés elegir por estilo y no por corrección.'
++  },
++  redonda: {
++    titulo: 'Redondo',
++    texto: 'Largo y ancho parecidos, con contornos suaves en mandíbula y mejillas.',
++    objetivo: 'Buscamos alargar visualmente: volumen arriba y costados más cortos.'
++  },
++  cuadrada: {
++    titulo: 'Cuadrado',
++    texto: 'Mandíbula marcada y casi tan ancha como los pómulos.',
++    objetivo: 'Suavizar ángulos con textura, o aprovecharlos con cortes prolijos.'
++  },
++  alargada: {
++    titulo: 'Alargado',
++    texto: 'El largo del rostro supera claramente su ancho.',
++    objetivo: 'Evitar volumen arriba y sumar ancho a los costados o con flequillo.'
++  },
++  corazon: {
++    titulo: 'Corazón',
++    texto: 'Frente amplia que se va angostando hacia un mentón fino.',
++    objetivo: 'Equilibrar: menos volumen en la parte alta, más hacia la mandíbula.'
++  },
++  diamante: {
++    titulo: 'Diamante',
++    texto: 'Pómulos anchos con frente y mentón más angostos.',
++    objetivo: 'Sumar ancho en frente y mentón, sin agregar volumen a los costados.'
++  }
++};
++
++export const RECOMENDACIONES: Record<FormaRostro, Record<EstiloCorte, Recomendacion[]>> = {
++  ovalada: {
++    masculino: [
++      { nombre: 'Slick back', descripcion: 'Peinado hacia atrás con costados degradados.' },
++      { nombre: 'Crop texturizado', descripcion: 'Corto, con flequillo corto y textura arriba.' },
++      { nombre: 'Medio largo', descripcion: 'Largo hasta la oreja con capas suaves.' }
++    ],
++    femenino: [
++      { nombre: 'Bob clásico', descripcion: 'Recto a la altura de la mandíbula.' },
++      { nombre: 'Largo en capas', descripcion: 'Capas largas que dan movimiento.' },
++      { nombre: 'Pixie', descripcion: 'Corto y texturizado; resalta las facciones.' }
++    ]
++  },
++  redonda: {
++    masculino: [
++      { nombre: 'Fade alto con quiff', descripcion: 'Costados muy cortos y volumen hacia arriba.' },
++      { nombre: 'Pompadour', descripcion: 'Volumen en la parte superior que estiliza.' },
++      { nombre: 'Undercut', descripcion: 'Contraste marcado entre costados y parte superior.' }
++    ],
++    femenino: [
++      { nombre: 'Long bob asimétrico', descripcion: 'Más largo adelante, pasa la línea del mentón.' },
++      { nombre: 'Capas largas', descripcion: 'Comienzan debajo del mentón para alargar.' },
++      { nombre: 'Flequillo lateral', descripcion: 'Rompe la simetría redonda del rostro.' }
++    ]
++  },
++  cuadrada: {
++    masculino: [
++      { nombre: 'Crew cut', descripcion: 'Corto y prolijo; aprovecha la mandíbula marcada.' },
++      { nombre: 'Texturizado desordenado', descripcion: 'Suaviza los ángulos con movimiento.' },
++      { nombre: 'Side part', descripcion: 'Raya al costado con degradado suave.' }
++    ],
++    femenino: [
++      { nombre: 'Ondas suaves', descripcion: 'Las ondas contrarrestan los ángulos.' },
++      { nombre: 'Capas desfiladas', descripcion: 'Enmarcan el rostro y suavizan la mandíbula.' },
++      { nombre: 'Flequillo cortina', descripcion: 'Abierto al medio, suaviza la frente.' }
++    ]
++  },
++  alargada: {
++    masculino: [
++      { nombre: 'Flequillo francés', descripcion: 'Flequillo recto que acorta visualmente la cara.' },
++      { nombre: 'Costados con largo', descripcion: 'Evitar fades muy altos; dejar algo de largo al costado.' },
++      { nombre: 'Buzz cut parejo', descripcion: 'Misma medida en toda la cabeza, sin volumen arriba.' }
++    ],
++    femenino: [
++      { nombre: 'Bob a la mandíbula', descripcion: 'Suma ancho a la altura correcta.' },
++      { nombre: 'Flequillo recto', descripcion: 'Reduce el largo visible del rostro.' },
++      { nombre: 'Ondas a los costados', descripcion: 'Volumen lateral en lugar de arriba.' }
++    ]
++  },
++  corazon: {
++    masculino: [
++      { nombre: 'Medio largo con textura', descripcion: 'Cubre algo de frente y suma peso abajo.' },
++      { nombre: 'Flequillo lateral', descripcion: 'Disimula una frente amplia.' },
++      { nombre: 'Barba completa', descripcion: 'Da ancho a la zona del mentón.' }
++    ],
++    femenino: [
++      { nombre: 'Long bob', descripcion: 'Volumen a la altura del mentón.' },
++      { nombre: 'Flequillo largo de lado', descripcion: 'Reduce visualmente la frente.' },
++      { nombre: 'Ondas en las puntas', descripcion: 'Agrega volumen en la parte baja.' }
++    ]
++  },
++  diamante: {
++    masculino: [
++      { nombre: 'Fringe texturizado', descripcion: 'Flequillo que ensancha la frente.' },
++      { nombre: 'Side swept', descripcion: 'Peinado de costado con algo de largo.' },
++      { nombre: 'Barba corta', descripcion: 'Da presencia a un mentón angosto.' }
++    ],
++    femenino: [
++      { nombre: 'Bob con flequillo', descripcion: 'Agrega ancho en frente y mentón.' },
++      { nombre: 'Capas detrás de la oreja', descripcion: 'Resalta pómulos sin ensanchar.' },
++      { nombre: 'Largo con volumen en puntas', descripcion: 'Equilibra la parte baja del rostro.' }
++    ]
++  }
++};
+-- 
+2.43.0
+
